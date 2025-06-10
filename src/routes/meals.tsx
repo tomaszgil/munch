@@ -1,15 +1,15 @@
 import { Heading } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
-  component: App,
+export const Route = createFileRoute("/meals")({
+  component: Meals,
 });
 
-function App() {
+function Meals() {
   return (
     <div>
       <Heading as="h1" size="7">
-        Dashboard
+        Meals
       </Heading>
     </div>
   );

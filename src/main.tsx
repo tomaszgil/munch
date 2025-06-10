@@ -4,8 +4,11 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen.ts";
-
+import "@radix-ui/themes/styles.css";
+import "@fontsource/geist-sans/400.css";
+import "@fontsource/geist-sans/600.css";
 import "./styles.css";
+
 import reportWebVitals from "./reportWebVitals.ts";
 
 // Create a new router instance
