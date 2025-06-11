@@ -94,7 +94,7 @@ export const NavSidebar = () => {
             icon={<DashboardIcon />}
             isCollapsed={isCollapsed}
           >
-            Home
+            Dashboard
           </NavLinkItem>
           <NavLinkItem
             to="/meals"

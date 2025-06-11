@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This rule provides standards for frontend components, ensuring consistent styling and animations:
+
+When working in with React components:
+
+- Always use `@radix-ui` components for low-level visual components
+
+When working with routing:
+
+- Follow `@tanstack/react-router` convensions and best practices
+- Keep the routes typesafe
