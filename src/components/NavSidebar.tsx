@@ -50,6 +50,8 @@ export const NavSidebar = () => {
       style={{
         width: isCollapsed ? "96px" : "320px",
         height: "100vh",
+        position: "sticky",
+        top: 0,
         transition: "width 0.2s ease-in-out",
         padding: "16px",
         display: "flex",
@@ -60,7 +62,7 @@ export const NavSidebar = () => {
       <Flex
         direction="column"
         style={{
-          height: "100vh",
+          height: "100%",
           width: "100%",
           borderRadius: "var(--radius-4)",
           background:
