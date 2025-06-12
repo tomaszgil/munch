@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { z } from "zod/v4";
+import debounce from "lodash/debounce";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { AddNewMealDialog } from "@/components/AddNewMealDialog";
 import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
@@ -36,11 +38,20 @@ function Meals() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { search, category } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  const createMeal = useMealCreate();
   const meals: Array<Meal> = useMealsQuery({
     category: category !== "all" ? category : undefined,
     search,
   });
-  const createMeal = useMealCreate();
+
+  const debouncedSearch = useCallback(
+    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+      navigate({
+        search: (prev) => ({ ...prev, search: e.target.value }),
+      });
+    }, 500),
+    []
+  );
 
   return (
     <div>
@@ -53,6 +64,8 @@ function Meals() {
             <TextField.Root
               placeholder="Search meals..."
               style={{ width: "300px" }}
+              defaultValue={search}
+              onChange={debouncedSearch}
             >
               <TextField.Slot>
                 <MagnifyingGlassIcon />
