@@ -1,18 +1,36 @@
+import type { MealCategory } from "@/services/meals/types";
 import { Badge } from "@radix-ui/themes";
 
-const getCategoryColor = (category: string) => {
+const getCategoryColor = (category: MealCategory) => {
   switch (category) {
-    case "Breakfast":
+    case "breakfast":
       return "blue";
-    case "Lunch":
+    case "lunch":
       return "green";
-    case "Dinner":
-      return "red";
+    case "dinner":
+      return "orange";
     default:
-      return "gray";
+      return "purple";
   }
 };
 
-export const CategoryBadge = ({ category }: { category: string }) => {
-  return <Badge color={getCategoryColor(category)}>{category}</Badge>;
+const getCategoryName = (category: MealCategory) => {
+  switch (category) {
+    case "breakfast":
+      return "Breakfast";
+    case "lunch":
+      return "Lunch";
+    case "dinner":
+      return "Dinner";
+    default:
+      return "Snack";
+  }
+};
+
+export const CategoryBadge = ({ category }: { category: MealCategory }) => {
+  return (
+    <Badge color={getCategoryColor(category)}>
+      {getCategoryName(category)}
+    </Badge>
+  );
 };

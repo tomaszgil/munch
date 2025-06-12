@@ -1,8 +1,7 @@
-import { useLocalStorageState } from "../../utils/useLocalStorageState";
-import { key } from "./keys";
+import { useSyncExternalStore } from "react";
+import { store } from "./store";
 import type { Meal } from "./types";
 
 export const useMealsQuery = () => {
-  const [meals] = useLocalStorageState<Meal[]>(key, []);
-  return meals;
+  return useSyncExternalStore<Meal[]>(store.subscribe, store.get);
 };
