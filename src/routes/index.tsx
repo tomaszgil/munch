@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
 function App() {
   return (
     <div>
-      <Heading as="h1" size="7">
+      <Heading as="h1" size="6" mt="3" mb="5">
         Dashboard
       </Heading>
     </div>

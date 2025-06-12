@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Text, Button } from "@radix-ui/themes";
+import { Box, Flex, IconButton, Text, Tooltip } from "@radix-ui/themes";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -17,22 +17,28 @@ interface NavLinkItemProps {
 }
 
 const NavLinkItem = ({ to, icon, children, isCollapsed }: NavLinkItemProps) => {
+  const iconWithTooltip = isCollapsed ? (
+    <Tooltip content={children} side="right">
+      {icon}
+    </Tooltip>
+  ) : (
+    icon
+  );
   return (
-    <Button
-      asChild
-      variant="ghost"
-      color="gray"
-      style={{ justifyContent: "flex-start" }}
+    <Link
+      to={to}
+      className="nav-link-item"
+      activeProps={{
+        "data-state": "active",
+      }}
     >
-      <Link to={to}>
-        {icon}
-        {!isCollapsed && (
-          <Text style={{ marginInlineStart: "var(--space-2)" }}>
-            {children}
-          </Text>
-        )}
-      </Link>
-    </Button>
+      {iconWithTooltip}
+      {!isCollapsed && (
+        <Text size="2" weight="bold">
+          {children}
+        </Text>
+      )}
+    </Link>
   );
 };
 
@@ -42,7 +48,7 @@ export const NavSidebar = () => {
   return (
     <Box
       style={{
-        width: isCollapsed ? "80px" : "320px",
+        width: isCollapsed ? "100px" : "320px",
         height: "100vh",
         transition: "width 0.2s ease-in-out",
         padding: "16px",
@@ -53,14 +59,12 @@ export const NavSidebar = () => {
     >
       <Flex
         direction="column"
-        gap="5"
-        p="4"
         style={{
           height: "100vh",
           width: "100%",
           borderRadius: "var(--radius-4)",
-          border: "1px solid var(--gray-2)",
-          boxShadow: "var(--shadow-3)",
+          background:
+            "radial-gradient(16rem 100% at 6.64% 0, #f4deff 0, #fbedff 42.5%, #fdf6fc 100%)",
         }}
       >
         {/* Header */}
@@ -69,11 +73,18 @@ export const NavSidebar = () => {
           justify="between"
           direction={isCollapsed ? "column" : "row"}
           gap="4"
+          p="4"
         >
           <Flex align="center" gap="2">
-            <img src={logo} alt="Munch" width={32} height={32} />
+            <img
+              src={logo}
+              alt="Munch"
+              width={32}
+              height={32}
+              style={{ borderRadius: "var(--radius-2)" }}
+            />
             {!isCollapsed && (
-              <Text size="5" weight="bold">
+              <Text size="4" weight="bold">
                 Munch
               </Text>
             )}
@@ -88,7 +99,7 @@ export const NavSidebar = () => {
         </Flex>
 
         {/* Navigation */}
-        <Flex direction="column" gap="2">
+        <Flex direction="column">
           <NavLinkItem
             to="/"
             icon={<DashboardIcon />}

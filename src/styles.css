@@ -18,3 +18,39 @@ body {
   /* Color customization */
   --color-background: "transparent";
 }
+
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+  text-decoration: none;
+  position: relative;
+  color: var(--gray-a11);
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link-item[data-state="active"] {
+  color: var(--accent-11);
+}
+
+.nav-link-item[data-state="active"]:before {
+  background: var(--accent-11);
+}
+
+.nav-link-item:hover {
+  color: var(--accent-11);
+}
+
+.nav-link-item:before {
+  content: "";
+  height: 1rem;
+  left: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.25rem;
+  background: "none";
+  border-radius: var(--radius-2);
+  transition: background 0.2s ease-in-out;
+}

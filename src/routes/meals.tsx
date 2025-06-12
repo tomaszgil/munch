@@ -55,7 +55,7 @@ function Meals() {
 
   return (
     <div>
-      <Heading as="h1" size="6" mt="2" mb="4">
+      <Heading as="h1" size="6" mt="3" mb="5">
         Meals
       </Heading>
       <Box maxWidth="960px" mx="auto">
