@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Text, Tooltip } from "@radix-ui/themes";
+import { Box, Flex, Text, Tooltip } from "@radix-ui/themes";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -48,7 +48,7 @@ export const NavSidebar = () => {
   return (
     <Box
       style={{
-        width: isCollapsed ? "100px" : "320px",
+        width: isCollapsed ? "96px" : "320px",
         height: "100vh",
         transition: "width 0.2s ease-in-out",
         padding: "16px",
@@ -89,13 +89,12 @@ export const NavSidebar = () => {
               </Text>
             )}
           </Flex>
-          <IconButton
-            variant="ghost"
-            color="gray"
+          <button
+            className="collapse-button"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
             <ViewVerticalIcon />
-          </IconButton>
+          </button>
         </Flex>
 
         {/* Navigation */}

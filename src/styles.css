@@ -27,6 +27,7 @@ body {
   text-decoration: none;
   position: relative;
   color: var(--gray-a11);
+  height: 1.25rem;
   transition: color 0.2s ease-in-out;
 }
 
@@ -53,4 +54,17 @@ body {
   background: "none";
   border-radius: var(--radius-2);
   transition: background 0.2s ease-in-out;
+}
+
+.collapse-button {
+  display: flex;
+  border: none;
+  color: var(--gray-a11);
+  padding: var(--space-2);
+  background: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.collapse-button:hover {
+  color: var(--accent-11);
 }
