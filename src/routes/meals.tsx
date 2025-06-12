@@ -1,3 +1,4 @@
+import { z } from "zod/v4";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { AddNewMealDialog } from "@/components/AddNewMealDialog";
 import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
@@ -12,19 +13,33 @@ import {
   Select,
   Separator,
 } from "@radix-ui/themes";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealCreate } from "@/services/meals/useMealCreate";
-import type { Meal } from "@/services/meals/types";
+import type { Meal, MealCategory } from "@/services/meals/types";
+
+const SearchSchema = z.object({
+  search: z.string().optional().default(""),
+  category: z
+    .enum(["all", "breakfast", "lunch", "dinner", "snack"])
+    .optional()
+    .default("all"),
+});
 
 export const Route = createFileRoute("/meals")({
   component: Meals,
+  validateSearch: (search) => SearchSchema.parse(search),
 });
 
 function Meals() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const meals: Array<Meal> = useMealsQuery();
+  const { search, category } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const meals: Array<Meal> = useMealsQuery({
+    category: category !== "all" ? category : undefined,
+    search,
+  });
   const createMeal = useMealCreate();
 
   return (
@@ -32,7 +47,7 @@ function Meals() {
       <Heading as="h1" size="6" mt="2" mb="4">
         Meals
       </Heading>
-      <Box>
+      <Box maxWidth="960px" mx="auto">
         <Card size="3">
           <Flex justify="between" mb="4">
             <TextField.Root
@@ -55,7 +70,17 @@ function Meals() {
             onSave={(meal) => createMeal(meal)}
           />
 
-          <Select.Root defaultValue="all">
+          <Select.Root
+            value={category}
+            onValueChange={(category: MealCategory) => {
+              navigate({
+                search: (prev) => ({
+                  ...prev,
+                  category,
+                }),
+              });
+            }}
+          >
             <Select.Trigger placeholder="Select category" />
             <Select.Content>
               <Select.Item value="all">All</Select.Item>
@@ -88,9 +113,7 @@ function Meals() {
                 <Card key={meal.id} size="2">
                   <Flex justify="between" align="center">
                     <Flex direction="column" gap="1">
-                      <Text size="4" weight="bold">
-                        {meal.name}
-                      </Text>
+                      <Text weight="bold">{meal.name}</Text>
                       <Text size="2" color="gray">
                         {meal.ingredients.join(", ")}
                       </Text>
