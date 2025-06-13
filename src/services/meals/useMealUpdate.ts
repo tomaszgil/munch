@@ -5,7 +5,7 @@ import type { MealUpdate } from "./types";
 export const useMealUpdate = () => {
   const updateMeal = useCallback((id: string, updates: MealUpdate) => {
     const now = new Date().toISOString();
-    store.update(id, { ...updates, updatedAt: now });
+    return store.update(id, { ...updates, updatedAt: now });
   }, []);
 
   return updateMeal;

@@ -24,6 +24,7 @@ import {
 } from "@radix-ui/themes";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealCreate } from "@/services/meals/useMealCreate";
 import { useMealDelete } from "@/services/meals/useMealDelete";
@@ -176,8 +177,9 @@ function Meals() {
         onOpenChange={(open) => !open && setMealIdToDelete(null)}
         onDelete={() => {
           if (mealIdToDelete) {
-            deleteMeal(mealIdToDelete);
+            const meal = deleteMeal(mealIdToDelete);
             setMealIdToDelete(null);
+            toast.success(`You have deleted ${meal?.name}`);
           }
         }}
       />

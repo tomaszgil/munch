@@ -14,7 +14,7 @@ export const useMealCreate = () => {
       updatedAt: now,
     };
 
-    store.create(newMeal);
+    return store.create(newMeal);
   }, []);
 
   return createMeal;
