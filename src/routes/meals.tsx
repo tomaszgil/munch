@@ -4,6 +4,7 @@ import debounce from "lodash/debounce";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { CreateMealDialog } from "@/components/CreateMealDialog";
 import { DeleteMealDialog } from "@/components/DeleteMealDialog";
+import { UpdateMealDialog } from "@/components/UpdateMealDialog";
 import {
   MagnifyingGlassIcon,
   PlusIcon,
@@ -28,6 +29,7 @@ import { toast } from "sonner";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealCreate } from "@/services/meals/useMealCreate";
 import { useMealDelete } from "@/services/meals/useMealDelete";
+import { useMealUpdate } from "@/services/meals/useMealUpdate";
 import type { Meal, MealCategory } from "@/services/meals/types";
 
 const SearchSchema = z.object({
@@ -46,10 +48,12 @@ export const Route = createFileRoute("/meals")({
 function Meals() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [mealIdToDelete, setMealIdToDelete] = useState<string | null>(null);
+  const [mealToEdit, setMealToEdit] = useState<Meal | null>(null);
   const { search, category } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const createMeal = useMealCreate();
   const deleteMeal = useMealDelete();
+  const updateMeal = useMealUpdate();
   const meals: Array<Meal> = useMealsQuery({
     category: category !== "all" ? category : undefined,
     search,
@@ -92,6 +96,16 @@ function Meals() {
             isOpen={isDialogOpen}
             onOpenChange={setIsDialogOpen}
             onSave={(meal) => createMeal(meal)}
+          />
+
+          <UpdateMealDialog
+            isOpen={!!mealToEdit}
+            onOpenChange={(open) => !open && setMealToEdit(null)}
+            onSave={(id, meal) => {
+              const updatedMeal = updateMeal(id, meal);
+              toast.success(`You have updated ${updatedMeal?.name}.`);
+            }}
+            meal={mealToEdit!}
           />
 
           <Select.Root
@@ -153,7 +167,11 @@ function Meals() {
                           </IconButton>
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content align="end">
-                          <DropdownMenu.Item>Edit</DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            onClick={() => setMealToEdit(meal)}
+                          >
+                            Edit
+                          </DropdownMenu.Item>
                           <DropdownMenu.Item
                             onClick={() => {
                               createMeal({
@@ -161,7 +179,9 @@ function Meals() {
                                 category: meal.category,
                                 ingredients: meal.ingredients,
                               });
-                              toast.success(`You have copied ${meal.name}`);
+                              toast.success(
+                                `You have duplicated ${meal.name}.`
+                              );
                             }}
                           >
                             Duplicate
@@ -190,7 +210,7 @@ function Meals() {
           if (mealIdToDelete) {
             const meal = deleteMeal(mealIdToDelete);
             setMealIdToDelete(null);
-            toast.success(`You have deleted ${meal?.name}`);
+            toast.success(`You have deleted ${meal?.name}.`);
           }
         }}
       />

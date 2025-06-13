@@ -36,7 +36,7 @@ export const store = {
       meal.id === id ? { ...meal, ...updates } : meal
     );
     store.set(updatedMeals);
-    return updatedMeals;
+    return updatedMeals.find((meal) => meal.id === id);
   },
   create: (meal: Meal) => {
     const updatedMeals = [...resultParsed, meal];
