@@ -51,9 +51,11 @@ function Meals() {
   const [mealToEdit, setMealToEdit] = useState<Meal | null>(null);
   const { search, category } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+
   const createMeal = useMealCreate();
   const deleteMeal = useMealDelete();
   const updateMeal = useMealUpdate();
+
   const meals: Array<Meal> = useMealsQuery({
     category: category !== "all" ? category : undefined,
     search,
@@ -75,7 +77,7 @@ function Meals() {
       </Heading>
       <Box maxWidth="960px" mx="auto">
         <Card size="3">
-          <Flex justify="between" mb="4">
+          <Flex justify="between" mb="4" gap="4">
             <TextField.Root
               placeholder="Search meals..."
               style={{ width: "300px" }}
@@ -95,7 +97,10 @@ function Meals() {
           <CreateMealDialog
             isOpen={isDialogOpen}
             onOpenChange={setIsDialogOpen}
-            onSave={(meal) => createMeal(meal)}
+            onSave={(meal) => {
+              const createdMeal = createMeal(meal);
+              toast.success(`You have created ${createdMeal.name}.`);
+            }}
           />
 
           <UpdateMealDialog
