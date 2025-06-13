@@ -25,4 +25,18 @@ export const store = {
     localStorage.setItem(key, JSON.stringify(value));
     window.dispatchEvent(new Event("storage"));
   },
+  delete: (id: string) => {
+    const updatedMeals = resultParsed.filter((meal) => meal.id !== id);
+    store.set(updatedMeals);
+  },
+  update: (id: string, updates: Partial<Meal>) => {
+    const updatedMeals = resultParsed.map((meal) =>
+      meal.id === id ? { ...meal, ...updates } : meal
+    );
+    store.set(updatedMeals);
+  },
+  create: (meal: Meal) => {
+    const updatedMeals = [...resultParsed, meal];
+    store.set(updatedMeals);
+  },
 };

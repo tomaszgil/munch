@@ -1,4 +1,4 @@
-import type { Meal, MealCategory } from "@/services/meals/types";
+import type { MealCategory, MealCreate } from "@/services/meals/types";
 import { PlusIcon, Cross2Icon } from "@radix-ui/react-icons";
 import {
   Button,
@@ -11,24 +11,24 @@ import {
 } from "@radix-ui/themes";
 import { useState } from "react";
 
-interface AddNewMealDialogProps {
+interface CreateMealDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (meal: Omit<Meal, "id">) => void;
+  onSave: (meal: MealCreate) => void;
 }
 
-const defaultMeal: Omit<Meal, "id"> = {
+const defaultMeal: MealCreate = {
   name: "",
   category: "breakfast",
   ingredients: [""],
 };
 
-export function AddNewMealDialog({
+export function CreateMealDialog({
   isOpen,
   onOpenChange,
   onSave,
-}: AddNewMealDialogProps) {
-  const [meal, setMeal] = useState<Omit<Meal, "id">>(defaultMeal);
+}: CreateMealDialogProps) {
+  const [meal, setMeal] = useState<MealCreate>(defaultMeal);
 
   const handleAddIngredient = () => {
     setMeal((prev) => ({
@@ -128,7 +128,9 @@ export function AddNewMealDialog({
 
         <Flex gap="3" mt="4" justify="end">
           <Dialog.Close>
-            <Button variant="soft">Cancel</Button>
+            <Button variant="soft" color="gray">
+              Cancel
+            </Button>
           </Dialog.Close>
           <Button onClick={handleSave}>Save</Button>
         </Flex>

@@ -2,8 +2,13 @@ import { useCallback } from "react";
 import { z } from "zod/v4";
 import debounce from "lodash/debounce";
 import { CategoryBadge } from "@/components/CategoryBadge";
-import { AddNewMealDialog } from "@/components/AddNewMealDialog";
-import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
+import { CreateMealDialog } from "@/components/CreateMealDialog";
+import { DeleteMealDialog } from "@/components/DeleteMealDialog";
+import {
+  MagnifyingGlassIcon,
+  PlusIcon,
+  DotsHorizontalIcon,
+} from "@radix-ui/react-icons";
 import {
   Box,
   Button,
@@ -14,11 +19,14 @@ import {
   Card,
   Select,
   Separator,
+  DropdownMenu,
+  IconButton,
 } from "@radix-ui/themes";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealCreate } from "@/services/meals/useMealCreate";
+import { useMealDelete } from "@/services/meals/useMealDelete";
 import type { Meal, MealCategory } from "@/services/meals/types";
 
 const SearchSchema = z.object({
@@ -36,9 +44,11 @@ export const Route = createFileRoute("/meals")({
 
 function Meals() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [mealIdToDelete, setMealIdToDelete] = useState<string | null>(null);
   const { search, category } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const createMeal = useMealCreate();
+  const deleteMeal = useMealDelete();
   const meals: Array<Meal> = useMealsQuery({
     category: category !== "all" ? category : undefined,
     search,
@@ -77,7 +87,7 @@ function Meals() {
             </Button>
           </Flex>
 
-          <AddNewMealDialog
+          <CreateMealDialog
             isOpen={isDialogOpen}
             onOpenChange={setIsDialogOpen}
             onSave={(meal) => createMeal(meal)}
@@ -127,11 +137,32 @@ function Meals() {
                   <Flex justify="between" align="center">
                     <Flex direction="column" gap="1">
                       <Text weight="bold">{meal.name}</Text>
-                      <Text size="2" color="gray">
-                        {meal.ingredients.join(", ")}
-                      </Text>
+                      <Flex gap="2" align="center">
+                        <CategoryBadge category={meal.category} />
+                        <Text size="2" color="gray">
+                          {meal.ingredients.join(", ")}
+                        </Text>
+                      </Flex>
                     </Flex>
-                    <CategoryBadge category={meal.category} />
+                    <Flex gap="4" align="center">
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger>
+                          <IconButton variant="ghost" color="gray">
+                            <DotsHorizontalIcon />
+                          </IconButton>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content align="end">
+                          <DropdownMenu.Item>Edit</DropdownMenu.Item>
+                          <DropdownMenu.Item>Duplicate</DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            color="red"
+                            onClick={() => setMealIdToDelete(meal.id)}
+                          >
+                            Delete
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                    </Flex>
                   </Flex>
                 </Card>
               ))}
@@ -139,6 +170,17 @@ function Meals() {
           )}
         </Card>
       </Box>
+
+      <DeleteMealDialog
+        isOpen={!!mealIdToDelete}
+        onOpenChange={(open) => !open && setMealIdToDelete(null)}
+        onDelete={() => {
+          if (mealIdToDelete) {
+            deleteMeal(mealIdToDelete);
+            setMealIdToDelete(null);
+          }
+        }}
+      />
     </div>
   );
 }
