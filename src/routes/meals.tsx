@@ -154,7 +154,18 @@ function Meals() {
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content align="end">
                           <DropdownMenu.Item>Edit</DropdownMenu.Item>
-                          <DropdownMenu.Item>Duplicate</DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            onClick={() => {
+                              createMeal({
+                                name: `Copy of ${meal.name}`,
+                                category: meal.category,
+                                ingredients: meal.ingredients,
+                              });
+                              toast.success(`You have copied ${meal.name}`);
+                            }}
+                          >
+                            Duplicate
+                          </DropdownMenu.Item>
                           <DropdownMenu.Item
                             color="red"
                             onClick={() => setMealIdToDelete(meal.id)}
