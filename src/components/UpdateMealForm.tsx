@@ -8,7 +8,7 @@ import {
   Select,
   IconButton,
 } from "@radix-ui/themes";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 interface UpdateMealFormProps {
   defaultValues?: {
@@ -33,17 +33,19 @@ export function UpdateMealForm({
   onSubmit,
   children,
 }: UpdateMealFormProps) {
-  const indexRef = useRef(defaultValues.ingredients?.length ?? 1);
-  const [ingredients, setIngredients] = useState<number[]>(
-    Array.from({ length: indexRef.current ?? 1 }, (_, i) => i)
+  const [ingredientFieldNames, setIngredientFieldNames] = useState<string[]>(
+    Array.from(
+      { length: defaultValues.ingredients?.length ?? 1 },
+      (_, index) => `ingredient-${index}`
+    )
   );
 
   const handleAddIngredient = () => {
-    setIngredients((prev) => [...prev, ++indexRef.current]);
+    setIngredientFieldNames((prev) => [...prev, `ingredient-${prev.length}`]);
   };
 
-  const handleRemoveIngredient = (id: number) => {
-    setIngredients((prev) => prev.filter((i) => i !== id));
+  const handleRemoveIngredient = (name: string) => {
+    setIngredientFieldNames((prev) => prev.filter((n) => n !== name));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,9 +55,9 @@ export function UpdateMealForm({
     const mealData = {
       name: formData.get("name") as string,
       category: formData.get("category") as MealCategory,
-      ingredients: ingredients
-        .map((id) => formData.get(`ingredient-${id}`) as string)
-        .filter(Boolean),
+      ingredients: ingredientFieldNames.map(
+        (name) => formData.get(name) as string
+      ),
     };
 
     onSubmit(mealData);
@@ -89,19 +91,19 @@ export function UpdateMealForm({
           <Text size="2" weight="bold">
             Ingredients
           </Text>
-          {ingredients.map((id, index) => (
-            <Flex key={id} gap="2" align="center">
+          {ingredientFieldNames.map((name, index) => (
+            <Flex key={name} gap="2" align="center">
               <TextField.Root
-                name={`ingredient-${id}`}
+                name={name}
                 placeholder="Ingredient"
                 style={{ flex: 1 }}
-                defaultValue={defaultValues.ingredients?.[index]}
+                value={defaultValues.ingredients?.[index]}
               />
               <IconButton
                 type="button"
                 variant="soft"
                 color="red"
-                onClick={() => handleRemoveIngredient(id)}
+                onClick={() => handleRemoveIngredient(name)}
               >
                 <Cross2Icon />
               </IconButton>
