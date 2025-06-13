@@ -29,6 +29,15 @@ body {
   color: var(--gray-a11);
   height: 1.25rem;
   transition: color 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.nav-link-item > svg {
+  flex-shrink: 0;
+}
+
+.nav-link-item > span {
+  transition: opacity 0.2s ease-in-out;
 }
 
 .nav-link-item[data-state="active"] {

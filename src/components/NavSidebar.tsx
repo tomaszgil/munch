@@ -33,11 +33,9 @@ const NavLinkItem = ({ to, icon, children, isCollapsed }: NavLinkItemProps) => {
       }}
     >
       {iconWithTooltip}
-      {!isCollapsed && (
-        <Text size="2" weight="bold">
-          {children}
-        </Text>
-      )}
+      <Text size="2" weight="bold" style={{ opacity: isCollapsed ? 0 : 1 }}>
+        {children}
+      </Text>
     </Link>
   );
 };
@@ -70,14 +68,8 @@ export const NavSidebar = () => {
         }}
       >
         {/* Header */}
-        <Flex
-          align="center"
-          justify="between"
-          direction={isCollapsed ? "column" : "row"}
-          gap="4"
-          p="4"
-        >
-          <Flex align="center" gap="2">
+        <Flex align="center" justify="between" wrap="wrap" gap="4" p="4">
+          <Flex align="center" gap="2" style={{ overflow: "hidden" }}>
             <img
               src={logo}
               alt="Munch"
@@ -85,11 +77,9 @@ export const NavSidebar = () => {
               height={32}
               style={{ borderRadius: "var(--radius-2)" }}
             />
-            {!isCollapsed && (
-              <Text size="4" weight="bold">
-                Munch
-              </Text>
-            )}
+            <Text size="4" weight="bold">
+              Munch
+            </Text>
           </Flex>
           <button
             className="collapse-button"
