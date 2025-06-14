@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { z } from "zod/v4";
 import debounce from "lodash/debounce";
-import { CategoryBadge } from "@/components/CategoryBadge";
 import { CreateMealDialog } from "@/components/CreateMealDialog";
 import { DeleteMealDialog } from "@/components/DeleteMealDialog";
 import { UpdateMealDialog } from "@/components/UpdateMealDialog";
