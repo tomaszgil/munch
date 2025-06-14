@@ -4,7 +4,7 @@ import type { Meal } from "@/services/meals/types";
 
 interface MealCardProps {
   meal: Meal;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function MealCard({ meal, children }: MealCardProps) {

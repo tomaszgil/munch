@@ -73,10 +73,10 @@ function Meals() {
 
   return (
     <div>
-      <Heading as="h1" size="6" mt="3" mb="5">
-        Meals
-      </Heading>
       <Box maxWidth="960px" mx="auto">
+        <Heading as="h1" size="6" mt="3" mb="5">
+          Meals
+        </Heading>
         <Card size="3">
           <Flex justify="between" mb="4" gap="4">
             <TextField.Root
