@@ -1,44 +1,8 @@
-import { Box, Flex, Text, Tooltip } from "@radix-ui/themes";
-import { Link } from "@tanstack/react-router";
+import { Box, Flex, Text } from "@radix-ui/themes";
 import { useState } from "react";
-import {
-  FileTextIcon,
-  DashboardIcon,
-  ViewVerticalIcon,
-} from "@radix-ui/react-icons";
-import type { ReactNode } from "react";
-import logo from "../assets/logo.png";
-
-interface NavLinkItemProps {
-  to: string;
-  icon: ReactNode;
-  children: ReactNode;
-  isCollapsed: boolean;
-}
-
-const NavLinkItem = ({ to, icon, children, isCollapsed }: NavLinkItemProps) => {
-  const iconWithTooltip = isCollapsed ? (
-    <Tooltip content={children} side="right">
-      {icon}
-    </Tooltip>
-  ) : (
-    icon
-  );
-  return (
-    <Link
-      to={to}
-      className="nav-link-item"
-      activeProps={{
-        "data-state": "active",
-      }}
-    >
-      {iconWithTooltip}
-      <Text size="2" weight="bold" style={{ opacity: isCollapsed ? 0 : 1 }}>
-        {children}
-      </Text>
-    </Link>
-  );
-};
+import { ViewVerticalIcon } from "@radix-ui/react-icons";
+import logo from "../../assets/logo.png";
+import { NavList } from "./NavList";
 
 export const NavSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -89,23 +53,7 @@ export const NavSidebar = () => {
           </button>
         </Flex>
 
-        {/* Navigation */}
-        <Flex direction="column">
-          <NavLinkItem
-            to="/"
-            icon={<DashboardIcon />}
-            isCollapsed={isCollapsed}
-          >
-            Dashboard
-          </NavLinkItem>
-          <NavLinkItem
-            to="/meals"
-            icon={<FileTextIcon />}
-            isCollapsed={isCollapsed}
-          >
-            Meals
-          </NavLinkItem>
-        </Flex>
+        <NavList isCollapsed={isCollapsed} />
       </Flex>
     </Box>
   );
