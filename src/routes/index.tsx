@@ -10,6 +10,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { CategoryBadge } from "@/components/CategoryBadge";
+import { MealCard } from "@/components/MealCard";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -40,19 +41,7 @@ function RecentMeals() {
   return (
     <Flex direction="column" gap="3">
       {recentMeals.map((meal) => (
-        <Card key={meal.id} size="2">
-          <Flex justify="between" align="center">
-            <Flex direction="column" gap="1">
-              <Text weight="bold">{meal.name}</Text>
-              <Flex gap="2" align="center">
-                <CategoryBadge category={meal.category} />
-                <Text size="2" color="gray">
-                  {meal.ingredients.join(", ")}
-                </Text>
-              </Flex>
-            </Flex>
-          </Flex>
-        </Card>
+        <MealCard key={meal.id} meal={meal} />
       ))}
     </Flex>
   );

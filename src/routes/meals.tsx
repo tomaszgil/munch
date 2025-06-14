@@ -31,6 +31,7 @@ import { useMealCreate } from "@/services/meals/useMealCreate";
 import { useMealDelete } from "@/services/meals/useMealDelete";
 import { useMealUpdate } from "@/services/meals/useMealUpdate";
 import type { Meal, MealCategory } from "@/services/meals/types";
+import { MealCard } from "@/components/MealCard";
 
 const SearchSchema = z.object({
   search: z.string().optional().default(""),
@@ -153,55 +154,40 @@ function Meals() {
           ) : (
             <Flex direction="column" gap="3">
               {meals.map((meal) => (
-                <Card key={meal.id} size="2">
-                  <Flex justify="between" align="center">
-                    <Flex direction="column" gap="1">
-                      <Text weight="bold">{meal.name}</Text>
-                      <Flex gap="2" align="center">
-                        <CategoryBadge category={meal.category} />
-                        <Text size="2" color="gray">
-                          {meal.ingredients.join(", ")}
-                        </Text>
-                      </Flex>
-                    </Flex>
-                    <Flex gap="4" align="center">
-                      <DropdownMenu.Root>
-                        <DropdownMenu.Trigger>
-                          <IconButton variant="ghost" color="gray">
-                            <DotsHorizontalIcon />
-                          </IconButton>
-                        </DropdownMenu.Trigger>
-                        <DropdownMenu.Content align="end">
-                          <DropdownMenu.Item
-                            onClick={() => setMealToEdit(meal)}
-                          >
-                            Edit
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            onClick={() => {
-                              createMeal({
-                                name: `Copy of ${meal.name}`,
-                                category: meal.category,
-                                ingredients: meal.ingredients,
-                              });
-                              toast.success(
-                                `You have duplicated ${meal.name}.`
-                              );
-                            }}
-                          >
-                            Duplicate
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            color="red"
-                            onClick={() => setMealIdToDelete(meal.id)}
-                          >
-                            Delete
-                          </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                      </DropdownMenu.Root>
-                    </Flex>
+                <MealCard meal={meal}>
+                  <Flex gap="4" align="center">
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger>
+                        <IconButton variant="ghost" color="gray">
+                          <DotsHorizontalIcon />
+                        </IconButton>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Content align="end">
+                        <DropdownMenu.Item onClick={() => setMealToEdit(meal)}>
+                          Edit
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            createMeal({
+                              name: `Copy of ${meal.name}`,
+                              category: meal.category,
+                              ingredients: meal.ingredients,
+                            });
+                            toast.success(`You have duplicated ${meal.name}.`);
+                          }}
+                        >
+                          Duplicate
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          color="red"
+                          onClick={() => setMealIdToDelete(meal.id)}
+                        >
+                          Delete
+                        </DropdownMenu.Item>
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Root>
                   </Flex>
-                </Card>
+                </MealCard>
               ))}
             </Flex>
           )}
