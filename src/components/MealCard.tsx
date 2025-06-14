@@ -1,4 +1,4 @@
-import { Card, Flex, Text } from "@radix-ui/themes";
+import { Badge, Card, Flex, Separator, Text } from "@radix-ui/themes";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import type { Meal } from "@/services/meals/types";
 
@@ -15,9 +15,16 @@ export function MealCard({ meal, children }: MealCardProps) {
           <Text weight="bold">{meal.name}</Text>
           <Flex gap="2" align="center">
             <CategoryBadge category={meal.category} />
-            <Text size="2" color="gray">
-              {meal.ingredients.join(", ")}
-            </Text>
+            <Flex gap="2" align="center">
+              <Text size="2" color="gray" truncate>
+                {meal.ingredients.slice(0, 3).join(", ")}
+              </Text>
+              {meal.ingredients.length > 3 && (
+                <Badge color="gray" variant="soft">
+                  + {meal.ingredients.length - 3}
+                </Badge>
+              )}
+            </Flex>
           </Flex>
         </Flex>
         {children}

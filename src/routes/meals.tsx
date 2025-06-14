@@ -153,7 +153,7 @@ function Meals() {
           ) : (
             <Flex direction="column" gap="3">
               {meals.map((meal) => (
-                <MealCard meal={meal}>
+                <MealCard key={meal.id} meal={meal}>
                   <Flex gap="4" align="center">
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger>

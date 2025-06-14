@@ -2,7 +2,8 @@ import { Box, Flex, Text } from "@radix-ui/themes";
 import { useState } from "react";
 import { ViewVerticalIcon } from "@radix-ui/react-icons";
 import logo from "../../assets/logo.png";
-import { NavList } from "./NavList";
+import { NavLinkItem } from "./NavListItem";
+import { navConfig } from "./config";
 
 export const NavSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -53,7 +54,16 @@ export const NavSidebar = () => {
           </button>
         </Flex>
 
-        <NavList isCollapsed={isCollapsed} />
+        {navConfig.map((item) => (
+          <NavLinkItem
+            key={item.label}
+            to={item.to}
+            icon={item.icon}
+            isCollapsed={isCollapsed}
+          >
+            {item.label}
+          </NavLinkItem>
+        ))}
       </Flex>
     </Box>
   );

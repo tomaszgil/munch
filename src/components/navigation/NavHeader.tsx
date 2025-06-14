@@ -2,7 +2,8 @@ import { Box, Flex, IconButton } from "@radix-ui/themes";
 import * as Popover from "@radix-ui/react-popover";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import logo from "../../assets/logo.png";
-import { NavList } from "./NavList";
+import { NavLinkItem } from "./NavListItem";
+import { navConfig } from "./config";
 
 export const NavHeader = () => {
   return (
@@ -40,7 +41,13 @@ export const NavHeader = () => {
                     "radial-gradient(16rem 100% at 6.64% 0, #f4deff 0, #fbedff 42.5%, #fdf6fc 100%)",
                 }}
               >
-                <NavList />
+                {navConfig.map((item) => (
+                  <Popover.Close asChild key={item.label}>
+                    <NavLinkItem to={item.to} icon={item.icon}>
+                      {item.label}
+                    </NavLinkItem>
+                  </Popover.Close>
+                ))}
               </Box>
             </Popover.Content>
           </Popover.Root>
