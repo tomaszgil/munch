@@ -1,4 +1,4 @@
-import { Badge, Card, Flex, Separator, Text } from "@radix-ui/themes";
+import { Badge, Card, Flex, Text } from "@radix-ui/themes";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import type { Meal } from "@/services/meals/types";
 
