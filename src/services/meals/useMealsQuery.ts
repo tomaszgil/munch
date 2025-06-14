@@ -8,7 +8,7 @@ export const useMealsQuery = ({
 }: {
   category?: MealCategory;
   search?: string;
-}) => {
+} = {}) => {
   const results = useSyncExternalStore<Meal[]>(store.subscribe, store.get);
   return results.filter((meal) => {
     let matches = true;
