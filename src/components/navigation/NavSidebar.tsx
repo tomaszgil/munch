@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@radix-ui/themes";
+import { Box, Flex, Text, Link } from "@radix-ui/themes";
 import { useState } from "react";
 import { MoonIcon, SunIcon, ViewVerticalIcon } from "@radix-ui/react-icons";
 import logo from "../../assets/logo.png";
@@ -93,7 +93,10 @@ export const NavSidebar = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              © 2025 Munch. All rights reserved.
+              © 2025{" "}
+              <Link href="https://tomaszgil.me" target="_blank">
+                Tomasz Gil
+              </Link>
             </Text>
           )}
           <button
