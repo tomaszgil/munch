@@ -104,6 +104,7 @@ function Meals() {
           />
 
           <UpdateMealDialog
+            key={mealToEdit?.id}
             isOpen={!!mealToEdit}
             onOpenChange={(open) => !open && setMealToEdit(null)}
             onSave={(id, meal) => {

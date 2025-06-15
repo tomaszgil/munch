@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import type { Meal, MealCategory, MealUpdate } from "@/services/meals/types";
 import { Button, Dialog } from "@radix-ui/themes";
 import { UpdateMealForm } from "./UpdateMealForm";
@@ -13,8 +14,13 @@ export function UpdateMealDialog({
   isOpen,
   onOpenChange,
   onSave,
-  meal,
+  meal: mealToUpdate,
 }: UpdateMealDialogProps) {
+  // Preserve the meal object reference across re-renders.
+  // This allows to avoid re-rendering when the dialog is closed.
+  const mealRef = useRef(mealToUpdate);
+  const meal = mealRef.current;
+
   const handleSubmit = (formData: {
     name: string;
     category: MealCategory;
@@ -35,11 +41,7 @@ export function UpdateMealDialog({
       <Dialog.Content style={{ maxWidth: 450 }}>
         <Dialog.Title>Edit meal</Dialog.Title>
         <Dialog.Description mb="4">Update meal details.</Dialog.Description>
-        <UpdateMealForm
-          key={meal?.id}
-          defaultValues={defaultValues}
-          onSubmit={handleSubmit}
-        >
+        <UpdateMealForm defaultValues={defaultValues} onSubmit={handleSubmit}>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
