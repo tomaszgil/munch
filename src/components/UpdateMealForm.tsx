@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import type { MealCategory } from "@/services/meals/types";
 import { PlusIcon, Cross2Icon, InfoCircledIcon } from "@radix-ui/react-icons";
 import {
@@ -50,9 +50,19 @@ export function UpdateMealForm({
       (_, index) => `ingredient-${index}`
     )
   );
+  const [lastAddedField, setLastAddedField] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onAfterRender = useCallback(() => {
+    if (lastAddedField && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [lastAddedField]);
 
   const handleAddIngredient = () => {
-    setIngredientFieldNames((prev) => [...prev, `ingredient-${prev.length}`]);
+    const newFieldName = `ingredient-${ingredientFieldNames.length}`;
+    setIngredientFieldNames((prev) => [...prev, newFieldName]);
+    setLastAddedField(newFieldName);
   };
 
   const handleRemoveIngredient = (name: string) => {
@@ -80,7 +90,7 @@ export function UpdateMealForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} ref={onAfterRender}>
       {errors.map((error) => (
         <Callout.Root key={error} color="red" size="1" mb="3">
           <Callout.Icon>
@@ -117,6 +127,7 @@ export function UpdateMealForm({
                 placeholder="Ingredient"
                 style={{ flex: 1 }}
                 defaultValue={defaultValues.ingredients?.[index]}
+                ref={name === lastAddedField ? inputRef : undefined}
               />
               <IconButton
                 type="button"
