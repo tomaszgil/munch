@@ -6,14 +6,24 @@ import {
   Heading,
   Text,
   DataList,
+  Button,
+  DropdownMenu,
 } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { MealCard } from "@/components/MealCard";
-import type { MealCategory } from "@/services/meals/types";
+import type { MealCategory, Meal } from "@/services/meals/types";
+import { useState, useCallback } from "react";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { useMealsByCategory } from "@/services/meals/useMealsByCategory";
 
-const orderedCategories = ["breakfast", "lunch", "dinner", "snack"] as const;
+const orderedCategories = [
+  { value: "breakfast", label: "Breakfast" },
+  { value: "lunch", label: "Lunch" },
+  { value: "dinner", label: "Dinner" },
+  { value: "snack", label: "Snack" },
+] as const;
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -52,18 +62,7 @@ function RecentMeals() {
 
 function Analytics() {
   const meals = useMealsQuery();
-  const mealsByCategory = meals.reduce(
-    (acc, meal) => {
-      acc[meal.category] = (acc[meal.category] || 0) + 1;
-      return acc;
-    },
-    {
-      breakfast: 0,
-      lunch: 0,
-      dinner: 0,
-      snack: 0,
-    } as Record<MealCategory, number>
-  );
+  const mealsByCategory = useMealsByCategory();
 
   return (
     <Grid columns="2" gap="4">
@@ -76,16 +75,83 @@ function Analytics() {
         </Text>
       </Flex>
       <DataList.Root>
-        {orderedCategories.map((category) => (
-          <DataList.Item key={category}>
+        {orderedCategories.map(({ value }) => (
+          <DataList.Item key={value}>
             <DataList.Label>
-              <CategoryBadge category={category as any} />
+              <CategoryBadge category={value as any} />
             </DataList.Label>
-            <DataList.Value>{mealsByCategory[category]}</DataList.Value>
+            <DataList.Value>{mealsByCategory[value]}</DataList.Value>
           </DataList.Item>
         ))}
       </DataList.Root>
     </Grid>
+  );
+}
+
+function RandomMealDrawer() {
+  const [randomMeal, setRandomMeal] = useState<Meal | null>(null);
+  const meals = useMealsQuery();
+  const mealsByCategory = useMealsByCategory();
+
+  const getRandomMeal = useCallback(
+    (category?: MealCategory) => {
+      if (meals.length === 0) return null;
+      const mealsToDraw = category
+        ? meals.filter((meal) => meal.category === category)
+        : meals;
+      return mealsToDraw[Math.floor(Math.random() * mealsToDraw.length)];
+    },
+    [meals]
+  );
+
+  if (meals.length === 0) {
+    return (
+      <Flex direction="column" align="center" gap="2" py="6">
+        <Heading size="4" align="center">
+          No meals available
+        </Heading>
+        <Text color="gray" align="center">
+          You haven't added any meals yet.
+        </Text>
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex direction="column" gap="4">
+      <Flex align="center">
+        <Button
+          onClick={() => setRandomMeal(getRandomMeal())}
+          style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        >
+          Draw random meal
+        </Button>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button
+              variant="soft"
+              style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            >
+              Draw by category
+              <ChevronDownIcon />
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content align="end">
+            {orderedCategories.map(({ value, label }) => (
+              <DropdownMenu.Item
+                disabled={mealsByCategory[value] === 0}
+                key={value}
+                onClick={() => setRandomMeal(getRandomMeal(value))}
+              >
+                {label}
+              </DropdownMenu.Item>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </Flex>
+
+      {randomMeal && <MealCard meal={randomMeal} />}
+    </Flex>
   );
 }
 
@@ -114,9 +180,10 @@ function App() {
             <Heading as="h2" size="4">
               Random Meal Drawer
             </Heading>
-            <Text size="2" color="gray">
+            <Text size="2" color="gray" mb="4">
               Draw a random meal from the database.
             </Text>
+            <RandomMealDrawer />
           </Flex>
         </Card>
         <Card size="3">
