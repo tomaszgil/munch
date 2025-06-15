@@ -11,6 +11,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { MealCard } from "@/components/MealCard";
+import type { MealCategory } from "@/services/meals/types";
+
+const orderedCategories = ["breakfast", "lunch", "dinner", "snack"] as const;
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -54,7 +57,12 @@ function Analytics() {
       acc[meal.category] = (acc[meal.category] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>
+    {
+      breakfast: 0,
+      lunch: 0,
+      dinner: 0,
+      snack: 0,
+    } as Record<MealCategory, number>
   );
 
   return (
@@ -68,12 +76,12 @@ function Analytics() {
         </Text>
       </Flex>
       <DataList.Root>
-        {Object.entries(mealsByCategory).map(([category, count]) => (
+        {orderedCategories.map((category) => (
           <DataList.Item key={category}>
             <DataList.Label>
               <CategoryBadge category={category as any} />
             </DataList.Label>
-            <DataList.Value>{count}</DataList.Value>
+            <DataList.Value>{mealsByCategory[category]}</DataList.Value>
           </DataList.Item>
         ))}
       </DataList.Root>

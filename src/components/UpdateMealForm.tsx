@@ -67,8 +67,8 @@ export function UpdateMealForm({
       name: formData.get("name") as string,
       category: formData.get("category") as MealCategory,
       ingredients: ingredientFieldNames
-        .map((name) => formData.get(name) as string)
-        .filter((item) => item.trim() !== ""),
+        .map((name) => formData.get(name)?.toString().trim() ?? "")
+        .filter(Boolean),
     };
 
     const parsed = mealFormSchema.safeParse(mealData);

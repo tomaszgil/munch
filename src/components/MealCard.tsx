@@ -12,7 +12,9 @@ export function MealCard({ meal, children }: MealCardProps) {
     <Card key={meal.id} size="2">
       <Flex justify="between" align="center">
         <Flex direction="column" gap="1">
-          <Text weight="bold">{meal.name}</Text>
+          <Text weight="bold" truncate>
+            {meal.name}
+          </Text>
           <Flex gap="2" align="center">
             <CategoryBadge category={meal.category} />
             <Flex gap="2" align="center">
