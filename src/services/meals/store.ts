@@ -43,4 +43,7 @@ export const store = {
     store.set(updatedMeals);
     return meal;
   },
+  reset: () => {
+    store.set([]);
+  },
 };

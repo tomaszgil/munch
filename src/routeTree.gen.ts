@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as MealsImport } from './routes/meals'
+import { Route as AdvancedImport } from './routes/advanced'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
@@ -19,6 +20,12 @@ import { Route as IndexImport } from './routes/index'
 const MealsRoute = MealsImport.update({
   id: '/meals',
   path: '/meals',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AdvancedRoute = AdvancedImport.update({
+  id: '/advanced',
+  path: '/advanced',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/advanced': {
+      id: '/advanced'
+      path: '/advanced'
+      fullPath: '/advanced'
+      preLoaderRoute: typeof AdvancedImport
+      parentRoute: typeof rootRoute
+    }
     '/meals': {
       id: '/meals'
       path: '/meals'
@@ -53,36 +67,41 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/advanced': typeof AdvancedRoute
   '/meals': typeof MealsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/advanced': typeof AdvancedRoute
   '/meals': typeof MealsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/advanced': typeof AdvancedRoute
   '/meals': typeof MealsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/meals'
+  fullPaths: '/' | '/advanced' | '/meals'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/meals'
-  id: '__root__' | '/' | '/meals'
+  to: '/' | '/advanced' | '/meals'
+  id: '__root__' | '/' | '/advanced' | '/meals'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdvancedRoute: typeof AdvancedRoute
   MealsRoute: typeof MealsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdvancedRoute: AdvancedRoute,
   MealsRoute: MealsRoute,
 }
 
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/advanced",
         "/meals"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/advanced": {
+      "filePath": "advanced.tsx"
     },
     "/meals": {
       "filePath": "meals.tsx"
