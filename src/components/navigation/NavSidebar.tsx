@@ -1,12 +1,16 @@
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { useState } from "react";
-import { ViewVerticalIcon } from "@radix-ui/react-icons";
+import { MoonIcon, SunIcon, ViewVerticalIcon } from "@radix-ui/react-icons";
 import logo from "../../assets/logo.png";
 import { NavLinkItem } from "./NavListItem";
 import { navConfig } from "./config";
+import { useBrandBackground } from "./useBrandBackground";
+import { useTheme } from "../theme/ThemeContext";
 
 export const NavSidebar = () => {
+  const { background } = useBrandBackground();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [theme, setTheme] = useTheme();
 
   return (
     <Box
@@ -20,6 +24,7 @@ export const NavSidebar = () => {
         display: "flex",
         flexDirection: "column",
         gap: "24px",
+        overflow: "hidden",
       }}
     >
       <Flex
@@ -28,12 +33,18 @@ export const NavSidebar = () => {
           height: "100%",
           width: "100%",
           borderRadius: "var(--radius-4)",
-          background:
-            "radial-gradient(16rem 100% at 6.64% 0, #f4deff 0, #fbedff 42.5%, #fdf6fc 100%)",
+          background,
         }}
       >
         {/* Header */}
-        <Flex align="center" justify="between" wrap="wrap" gap="4" p="4">
+        <Flex
+          align="center"
+          justify="between"
+          flexGrow="1"
+          wrap="wrap"
+          gap="4"
+          p="4"
+        >
           <Flex align="center" gap="2" style={{ overflow: "hidden" }}>
             <img
               src={logo}
@@ -47,23 +58,51 @@ export const NavSidebar = () => {
             </Text>
           </Flex>
           <button
-            className="collapse-button"
+            className="sidebar-button"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
             <ViewVerticalIcon />
           </button>
         </Flex>
 
-        {navConfig.map((item) => (
-          <NavLinkItem
-            key={item.label}
-            to={item.to}
-            icon={item.icon}
-            isCollapsed={isCollapsed}
+        <Box flexBasis="100%">
+          {navConfig.map((item) => (
+            <NavLinkItem
+              key={item.label}
+              to={item.to}
+              icon={item.icon}
+              isCollapsed={isCollapsed}
+            >
+              {item.label}
+            </NavLinkItem>
+          ))}
+        </Box>
+        <Flex
+          p="4"
+          align="center"
+          gap="4"
+          justify={isCollapsed ? "center" : "between"}
+        >
+          {!isCollapsed && (
+            <Text
+              size="1"
+              color="gray"
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              © 2025 Munch. All rights reserved.
+            </Text>
+          )}
+          <button
+            className="sidebar-button"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           >
-            {item.label}
-          </NavLinkItem>
-        ))}
+            {theme === "dark" ? <MoonIcon /> : <SunIcon />}
+          </button>
+        </Flex>
       </Flex>
     </Box>
   );

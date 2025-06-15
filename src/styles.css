@@ -67,7 +67,7 @@ body {
 }
 
 /* Desktop Navigation */
-.collapse-button {
+.sidebar-button {
   display: flex;
   border: none;
   color: var(--gray-a11);
@@ -76,7 +76,7 @@ body {
   transition: color 0.2s ease-in-out;
 }
 
-.collapse-button:hover {
+.sidebar-button:hover {
   color: var(--accent-11);
 }
 

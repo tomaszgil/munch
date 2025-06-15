@@ -1,6 +1,5 @@
-import { Theme, Box, Flex } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
 import {
   CheckCircledIcon,
@@ -11,11 +10,12 @@ import {
 
 import { NavHeader } from "@/components/navigation/NavHeader";
 import { NavSidebar } from "../components/navigation/NavSidebar";
+import { ThemeProvider } from "@/components/theme/ThemeContext";
 
 export const Route = createRootRoute({
   component: () => {
     return (
-      <Theme accentColor="plum" grayColor="sand" radius="large">
+      <ThemeProvider>
         <Flex direction={{ initial: "column", md: "row" }}>
           <Box display={{ initial: "block", md: "none" }}>
             <NavHeader />
@@ -37,8 +37,7 @@ export const Route = createRootRoute({
             error: <CrossCircledIcon color="red" />,
           }}
         />
-        <TanStackRouterDevtools />
-      </Theme>
+      </ThemeProvider>
     );
   },
 });

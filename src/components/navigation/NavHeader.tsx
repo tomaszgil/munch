@@ -1,11 +1,16 @@
 import { Box, Flex, IconButton } from "@radix-ui/themes";
 import * as Popover from "@radix-ui/react-popover";
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { HamburgerMenuIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import logo from "../../assets/logo.png";
 import { NavLinkItem } from "./NavListItem";
 import { navConfig } from "./config";
+import { useBrandBackground } from "./useBrandBackground";
+import { useTheme } from "../theme/ThemeContext";
 
 export const NavHeader = () => {
+  const { background } = useBrandBackground();
+  const [theme, setTheme] = useTheme();
+
   return (
     <Box mb="64px">
       <Box
@@ -23,34 +28,41 @@ export const NavHeader = () => {
             width={32}
             style={{ borderRadius: "var(--radius-2)" }}
           />
-          <Popover.Root>
-            <Popover.Trigger asChild>
-              <IconButton variant="ghost" mr="2">
-                <HamburgerMenuIcon />
-              </IconButton>
-            </Popover.Trigger>
+          <Flex align="center" gap="4" px="2">
+            <IconButton
+              variant="ghost"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <MoonIcon /> : <SunIcon />}
+            </IconButton>
+            <Popover.Root>
+              <Popover.Trigger asChild>
+                <IconButton variant="ghost">
+                  <HamburgerMenuIcon />
+                </IconButton>
+              </Popover.Trigger>
 
-            <Popover.Content className="nav-overlay-content" sideOffset={4}>
-              <Box
-                py="4"
-                style={{
-                  height: "100%",
-                  width: "100%",
-                  borderRadius: "var(--radius-4)",
-                  background:
-                    "radial-gradient(16rem 100% at 6.64% 0, #f4deff 0, #fbedff 42.5%, #fdf6fc 100%)",
-                }}
-              >
-                {navConfig.map((item) => (
-                  <Popover.Close asChild key={item.label}>
-                    <NavLinkItem to={item.to} icon={item.icon}>
-                      {item.label}
-                    </NavLinkItem>
-                  </Popover.Close>
-                ))}
-              </Box>
-            </Popover.Content>
-          </Popover.Root>
+              <Popover.Content className="nav-overlay-content" sideOffset={4}>
+                <Box
+                  py="4"
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    borderRadius: "var(--radius-4)",
+                    background,
+                  }}
+                >
+                  {navConfig.map((item) => (
+                    <Popover.Close asChild key={item.label}>
+                      <NavLinkItem to={item.to} icon={item.icon}>
+                        {item.label}
+                      </NavLinkItem>
+                    </Popover.Close>
+                  ))}
+                </Box>
+              </Popover.Content>
+            </Popover.Root>
+          </Flex>
         </Flex>
       </Box>
     </Box>

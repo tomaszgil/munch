@@ -12,8 +12,8 @@ export const navConfig = [
     to: "/meals",
   },
   {
-    label: "Management",
+    label: "Advanced",
     icon: <GearIcon />,
-    to: "/management",
+    to: "/advanced",
   },
 ];
