@@ -28,14 +28,14 @@ export function UpdateMealForm({
   defaultValues = {
     name: "",
     category: "breakfast",
-    ingredients: [""],
+    ingredients: [],
   },
   onSubmit,
   children,
 }: UpdateMealFormProps) {
   const [ingredientFieldNames, setIngredientFieldNames] = useState<string[]>(
     Array.from(
-      { length: defaultValues.ingredients?.length ?? 1 },
+      { length: defaultValues.ingredients?.length || 1 },
       (_, index) => `ingredient-${index}`
     )
   );
@@ -55,9 +55,9 @@ export function UpdateMealForm({
     const mealData = {
       name: formData.get("name") as string,
       category: formData.get("category") as MealCategory,
-      ingredients: ingredientFieldNames.map(
-        (name) => formData.get(name) as string
-      ),
+      ingredients: ingredientFieldNames
+        .map((name) => formData.get(name) as string)
+        .filter((item) => item.trim() !== ""),
     };
 
     onSubmit(mealData);
@@ -70,14 +70,9 @@ export function UpdateMealForm({
           name="name"
           placeholder="Meal name"
           defaultValue={defaultValues.name}
-          required
         />
 
-        <Select.Root
-          name="category"
-          defaultValue={defaultValues.category}
-          required
-        >
+        <Select.Root name="category" defaultValue={defaultValues.category}>
           <Select.Trigger placeholder="Select category" />
           <Select.Content>
             <Select.Item value="breakfast">Breakfast</Select.Item>
@@ -97,7 +92,7 @@ export function UpdateMealForm({
                 name={name}
                 placeholder="Ingredient"
                 style={{ flex: 1 }}
-                value={defaultValues.ingredients?.[index]}
+                defaultValue={defaultValues.ingredients?.[index]}
               />
               <IconButton
                 type="button"
