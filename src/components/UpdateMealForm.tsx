@@ -1,5 +1,6 @@
+import { useState } from "react";
 import type { MealCategory } from "@/services/meals/types";
-import { PlusIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { PlusIcon, Cross2Icon, InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   Button,
   Flex,
@@ -7,8 +8,17 @@ import {
   Text,
   Select,
   IconButton,
+  Callout,
 } from "@radix-ui/themes";
-import { useState } from "react";
+import { z } from "zod/v4";
+
+const mealFormSchema = z.object({
+  name: z.string().min(1, "Meal name is required."),
+  category: z.enum(["breakfast", "lunch", "dinner", "snack"] as const),
+  ingredients: z
+    .array(z.string().min(1, "Ingredient cannot be empty."))
+    .min(1, "At least one ingredient is required."),
+});
 
 interface UpdateMealFormProps {
   defaultValues?: {
@@ -33,6 +43,7 @@ export function UpdateMealForm({
   onSubmit,
   children,
 }: UpdateMealFormProps) {
+  const [errors, setErrors] = useState<Array<string>>([]);
   const [ingredientFieldNames, setIngredientFieldNames] = useState<string[]>(
     Array.from(
       { length: defaultValues.ingredients?.length || 1 },
@@ -60,11 +71,24 @@ export function UpdateMealForm({
         .filter((item) => item.trim() !== ""),
     };
 
-    onSubmit(mealData);
+    const parsed = mealFormSchema.safeParse(mealData);
+    if (parsed.success) {
+      onSubmit(mealData);
+    } else {
+      setErrors(parsed.error.issues.map((issue) => issue.message));
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {errors.map((error) => (
+        <Callout.Root key={error} color="red" size="1" mb="3">
+          <Callout.Icon>
+            <InfoCircledIcon />
+          </Callout.Icon>
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      ))}
       <Flex direction="column" gap="3">
         <TextField.Root
           name="name"
