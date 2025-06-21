@@ -40,7 +40,7 @@ const SearchSchema = z.object({
     .default("all"),
 });
 
-export const Route = createFileRoute("/meals")({
+export const Route = createFileRoute("/meals/")({
   component: Meals,
   validateSearch: (search) => SearchSchema.parse(search),
 });

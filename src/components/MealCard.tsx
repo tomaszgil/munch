@@ -1,4 +1,5 @@
 import { Badge, Card, Flex, Text } from "@radix-ui/themes";
+import { Link } from "@tanstack/react-router";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import type { Meal } from "@/services/meals/types";
 
@@ -13,7 +14,13 @@ export function MealCard({ meal, children }: MealCardProps) {
       <Flex justify="between" align="center">
         <Flex direction="column" gap="1">
           <Text weight="bold" truncate>
-            {meal.name}
+            <Link
+              to="/meals/$mealId"
+              params={{ mealId: meal.id }}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              {meal.name}
+            </Link>
           </Text>
           <Flex gap="2" align="center">
             <CategoryBadge category={meal.category} />

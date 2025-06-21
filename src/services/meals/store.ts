@@ -21,6 +21,9 @@ export const store = {
     }
     return resultParsed;
   },
+  getById: (id: string) => {
+    return resultParsed.find((meal) => meal.id === id);
+  },
   set: (value: Array<Meal>) => {
     localStorage.setItem(key, JSON.stringify(value));
     window.dispatchEvent(new Event("storage"));
