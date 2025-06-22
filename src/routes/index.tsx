@@ -166,6 +166,10 @@ function App() {
 
   return (
     <Box maxWidth="960px" mx="auto">
+      <Heading as="h1" size="6" mt="4" mb="5">
+        Dashboard
+      </Heading>
+
       <Flex
         direction="column"
         gap="3"
@@ -177,7 +181,7 @@ function App() {
         }}
         mb="5"
       >
-        <Heading as="h1" size="5">
+        <Heading as="h2" size="5">
           Welcome to Munch! 👋
         </Heading>
         <Text size="3">
