@@ -89,7 +89,7 @@ function Analytics() {
   );
 }
 
-function AnimatedDrawer({
+const AnimatedDrawer = function AnimatedDrawer({
   items,
   selectedItem,
 }: {
@@ -133,7 +133,7 @@ function AnimatedDrawer({
       ))}
     </div>
   );
-}
+};
 
 function RandomMealDrawer() {
   const [randomMeal, setRandomMeal] = useState<Meal | null>(null);
