@@ -9,6 +9,7 @@ import {
   DataList,
   Button,
   Separator,
+  Text,
 } from "@radix-ui/themes";
 import {
   createFileRoute,
@@ -40,17 +41,31 @@ function RouteComponent() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // TODO: Add an error state
-  if (!meal) {
-    return <div>Meal not found</div>;
-  }
-
   const navigateToMeals = () => {
     navigate({
       to: "/meals",
       search: { category: "all", search: "" },
     });
   };
+
+  if (!meal) {
+    return (
+      <Box maxWidth="960px" mx="auto">
+        <Flex direction="column" align="center" gap="2" py="9">
+          <Heading size="4" align="center">
+            Meal not found
+          </Heading>
+          <Text color="gray" align="center" mb="3">
+            This meal might have been deleted or was never here in the first
+            place.
+          </Text>
+          <Button variant="soft" onClick={navigateToMeals}>
+            Back to meals
+          </Button>
+        </Flex>
+      </Box>
+    );
+  }
 
   const handleDelete = () => {
     const deletedMeal = deleteMeal(mealId);
@@ -130,7 +145,7 @@ function RouteComponent() {
       </Box>
 
       <UpdateMealDialog
-        key={meal.id}
+        key={JSON.stringify(meal)}
         isOpen={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         onSave={handleUpdate}
