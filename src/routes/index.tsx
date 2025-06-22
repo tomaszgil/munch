@@ -8,6 +8,7 @@ import {
   DataList,
   Button,
   DropdownMenu,
+  Skeleton,
 } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
@@ -151,7 +152,11 @@ function RandomMealDrawer() {
         </DropdownMenu.Root>
       </Flex>
 
-      {randomMeal && <MealCard meal={randomMeal} />}
+      {randomMeal ? (
+        <MealCard meal={randomMeal} />
+      ) : (
+        <Skeleton width="100%" height="80px" />
+      )}
     </Flex>
   );
 }
@@ -161,10 +166,6 @@ function App() {
 
   return (
     <Box maxWidth="960px" mx="auto">
-      <Heading as="h1" size="6" mt="4" mb="5">
-        Dashboard
-      </Heading>
-
       <Flex
         direction="column"
         gap="3"
@@ -174,9 +175,9 @@ function App() {
           padding: "var(--space-5)",
           borderRadius: "var(--radius-4)",
         }}
-        mb="4"
+        mb="5"
       >
-        <Heading as="h2" size="5">
+        <Heading as="h1" size="5">
           Welcome to Munch! 👋
         </Heading>
         <Text size="3">
