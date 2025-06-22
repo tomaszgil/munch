@@ -24,6 +24,7 @@ import { ChevronLeftIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { UpdateMealDialog } from "@/components/UpdateMealDialog";
 import { DeleteMealDialog } from "@/components/DeleteMealDialog";
+import { ContentErrorBoundary } from "@/components/ContentErrorBoundary";
 
 export const Route = createFileRoute("/meals/$mealId")({
   component: RouteComponent,
@@ -50,20 +51,22 @@ function RouteComponent() {
 
   if (!meal) {
     return (
-      <Box maxWidth="960px" mx="auto">
-        <Flex direction="column" align="center" gap="2" py="9">
-          <Heading size="4" align="center">
-            Meal not found
-          </Heading>
-          <Text color="gray" align="center" mb="3">
-            This meal might have been deleted or was never here in the first
-            place.
-          </Text>
-          <Button variant="soft" onClick={navigateToMeals}>
-            Back to meals
-          </Button>
-        </Flex>
-      </Box>
+      <ContentErrorBoundary>
+        <Box maxWidth="960px" mx="auto">
+          <Flex direction="column" align="center" gap="2" py="9">
+            <Heading size="4" align="center">
+              Meal not found
+            </Heading>
+            <Text color="gray" align="center" mb="3">
+              This meal might have been deleted or was never here in the first
+              place.
+            </Text>
+            <Button variant="soft" onClick={navigateToMeals}>
+              Back to meals
+            </Button>
+          </Flex>
+        </Box>
+      </ContentErrorBoundary>
     );
   }
 
@@ -83,7 +86,7 @@ function RouteComponent() {
   return (
     <>
       <Box maxWidth="960px" mx="auto">
-        <Flex align="center" mt="3" mb="5" gap="3">
+        <Flex align="center" mt="4" mb="5" gap="3">
           <IconButton
             variant="ghost"
             color="gray"

@@ -11,6 +11,7 @@ import {
 import { NavHeader } from "@/components/navigation/NavHeader";
 import { NavSidebar } from "../components/navigation/NavSidebar";
 import { ThemeProvider } from "@/components/theme/ThemeContext";
+import { ContentErrorBoundary } from "@/components/ContentErrorBoundary";
 
 export const Route = createRootRoute({
   component: () => {
@@ -25,8 +26,10 @@ export const Route = createRootRoute({
           </Box>
 
           {/* Main Content */}
-          <Box style={{ flex: 1, padding: "24px" }}>
-            <Outlet />
+          <Box p="4" style={{ flex: 1 }}>
+            <ContentErrorBoundary>
+              <Outlet />
+            </ContentErrorBoundary>
           </Box>
         </Flex>
         <Toaster

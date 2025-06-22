@@ -1,4 +1,5 @@
 import type { Meal } from "./types";
+import { parseMeal } from "./parse";
 
 const key = "v1/meals";
 
@@ -11,12 +12,10 @@ export const store = {
     return () => window.removeEventListener("storage", callback);
   },
   get: () => {
-    // TODO: Add type validation
     const storedString = localStorage.getItem(key) || "";
     if (storedString !== resultString) {
-      resultParsed = storedString
-        ? (JSON.parse(storedString) as Array<Meal>)
-        : [];
+      const rawResultParsed = storedString ? JSON.parse(storedString) : [];
+      resultParsed = rawResultParsed.map(parseMeal);
       resultString = storedString;
     }
     return resultParsed;

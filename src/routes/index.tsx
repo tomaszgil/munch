@@ -158,7 +158,7 @@ function RandomMealDrawer() {
 function App() {
   return (
     <Box maxWidth="960px" mx="auto">
-      <Heading as="h1" size="6" mt="3" mb="5">
+      <Heading as="h1" size="6" mt="4" mb="5">
         Dashboard
       </Heading>
 
