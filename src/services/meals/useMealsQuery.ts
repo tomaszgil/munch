@@ -17,7 +17,11 @@ export const useMealsQuery = ({
     }
     if (search !== undefined) {
       matches =
-        matches && meal.name.toLowerCase().includes(search.toLowerCase());
+        matches &&
+        [
+          meal.name.toLowerCase(),
+          ...meal.ingredients.map((i) => i.toLowerCase()),
+        ].some((i) => i.includes(search.toLowerCase()));
     }
     return matches;
   });
