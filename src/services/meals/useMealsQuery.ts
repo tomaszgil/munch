@@ -10,7 +10,8 @@ export const useMealsQuery = ({
   search?: string;
 } = {}) => {
   const results = useSyncExternalStore<Meal[]>(store.subscribe, store.get);
-  return results.filter((meal) => {
+
+  const filteredResults = results.filter((meal) => {
     let matches = true;
     if (category !== undefined) {
       matches = matches && meal.category === category;
@@ -25,4 +26,8 @@ export const useMealsQuery = ({
     }
     return matches;
   });
+
+  return filteredResults.sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
 };
