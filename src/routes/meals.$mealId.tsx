@@ -10,7 +10,12 @@ import {
   Button,
   Separator,
 } from "@radix-ui/themes";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useCanGoBack,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { useMealQuery } from "@/services/meals/useMealQuery";
 import { useMealDelete } from "@/services/meals/useMealDelete";
 import { useMealUpdate } from "@/services/meals/useMealUpdate";
@@ -26,6 +31,8 @@ export const Route = createFileRoute("/meals/$mealId")({
 function RouteComponent() {
   const { mealId } = Route.useParams();
   const navigate = useNavigate();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
   const meal = useMealQuery(mealId);
   const deleteMeal = useMealDelete();
   const updateMeal = useMealUpdate();
@@ -38,14 +45,18 @@ function RouteComponent() {
     return <div>Meal not found</div>;
   }
 
-  const handleDelete = () => {
-    const deletedMeal = deleteMeal(mealId);
-    setIsDeleteDialogOpen(false);
-    toast.success(`You have deleted ${deletedMeal?.name}.`);
+  const navigateToMeals = () => {
     navigate({
       to: "/meals",
       search: { category: "all", search: "" },
     });
+  };
+
+  const handleDelete = () => {
+    const deletedMeal = deleteMeal(mealId);
+    setIsDeleteDialogOpen(false);
+    toast.success(`You have deleted ${deletedMeal?.name}.`);
+    navigateToMeals();
   };
 
   const handleUpdate = (id: string, mealUpdate: any) => {
@@ -58,11 +69,16 @@ function RouteComponent() {
     <>
       <Box maxWidth="960px" mx="auto">
         <Flex align="center" mt="3" mb="5" gap="3">
-          <Link to="/meals" search={{ category: "all", search: "" }}>
-            <IconButton variant="ghost" color="gray" size="1">
-              <ChevronLeftIcon width={24} height={24} />
-            </IconButton>
-          </Link>
+          <IconButton
+            variant="ghost"
+            color="gray"
+            size="1"
+            onClick={() =>
+              canGoBack ? router.history.back() : navigateToMeals()
+            }
+          >
+            <ChevronLeftIcon width={24} height={24} />
+          </IconButton>
           <Heading as="h1" size="6" truncate>
             {meal?.name}
           </Heading>
