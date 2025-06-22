@@ -110,7 +110,7 @@ const AnimatedDrawer = function AnimatedDrawer({
   }, [selectedItem, items]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", minHeight: "80px" }}>
       {animationItems.map((meal, index) => (
         <div
           key={`${meal.id}-${index}`}
@@ -197,7 +197,17 @@ function RandomMealDrawer() {
         </DropdownMenu.Root>
       </Flex>
 
-      <AnimatedDrawer items={meals} selectedItem={randomMeal} />
+      {!randomMeal && (
+        <Card size="2">
+          <Flex minHeight="48px" align="center" justify="center">
+            <Text color="gray" size="2">
+              Your meal drawer is empty
+            </Text>
+          </Flex>
+        </Card>
+      )}
+
+      {randomMeal && <AnimatedDrawer items={meals} selectedItem={randomMeal} />}
     </Flex>
   );
 }
