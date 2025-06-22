@@ -10,7 +10,7 @@ interface MealCardProps {
 
 export function MealCard({ meal, children }: MealCardProps) {
   return (
-    <Card key={meal.id} size="2">
+    <Card size="2">
       <Flex justify="between" align="center">
         <Flex direction="column" gap="1">
           <Text weight="bold" truncate>

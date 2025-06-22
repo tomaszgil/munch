@@ -8,14 +8,13 @@ import {
   DataList,
   Button,
   DropdownMenu,
-  Skeleton,
 } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { MealCard } from "@/components/MealCard";
 import type { MealCategory, Meal } from "@/services/meals/types";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useMealsByCategory } from "@/services/meals/useMealsByCategory";
 import { useBrandBackground } from "@/components/navigation/useBrandBackground";
@@ -90,6 +89,52 @@ function Analytics() {
   );
 }
 
+function AnimatedDrawer({
+  items,
+  selectedItem,
+}: {
+  items: Meal[];
+  selectedItem: Meal | null;
+}) {
+  const [animationItems, setAnimationItems] = useState<Meal[]>([]);
+
+  useEffect(() => {
+    if (selectedItem && items.length > 0) {
+      const rouletteItems = Array.from({ length: 4 }, () => {
+        const randomIndex = Math.floor(Math.random() * items.length);
+        return items[randomIndex];
+      });
+
+      setAnimationItems([...rouletteItems, selectedItem]);
+    }
+  }, [selectedItem, items]);
+
+  return (
+    <div style={{ position: "relative" }}>
+      {animationItems.map((meal, index) => (
+        <div
+          key={`${meal.id}-${index}`}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            zIndex: index + 1,
+            backgroundColor: "var(--color-panel-solid)",
+            animation: `slideUp 0.6s ease-in-out ${index * 0.3}s forwards`,
+            opacity: 0,
+            transform: "translateY(40px)",
+            pointerEvents:
+              index === animationItems.length - 1 ? "auto" : "none",
+          }}
+        >
+          <MealCard meal={meal} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function RandomMealDrawer() {
   const [randomMeal, setRandomMeal] = useState<Meal | null>(null);
   const meals = useMealsQuery();
@@ -152,11 +197,7 @@ function RandomMealDrawer() {
         </DropdownMenu.Root>
       </Flex>
 
-      {randomMeal ? (
-        <MealCard meal={randomMeal} />
-      ) : (
-        <Skeleton width="100%" height="80px" />
-      )}
+      <AnimatedDrawer items={meals} selectedItem={randomMeal} />
     </Flex>
   );
 }
