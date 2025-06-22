@@ -17,6 +17,7 @@ import type { MealCategory, Meal } from "@/services/meals/types";
 import { useState, useCallback } from "react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useMealsByCategory } from "@/services/meals/useMealsByCategory";
+import { useBrandBackground } from "@/components/navigation/useBrandBackground";
 
 const orderedCategories = [
   { value: "breakfast", label: "Breakfast" },
@@ -156,11 +157,35 @@ function RandomMealDrawer() {
 }
 
 function App() {
+  const brandBackground = useBrandBackground();
+
   return (
     <Box maxWidth="960px" mx="auto">
       <Heading as="h1" size="6" mt="4" mb="5">
         Dashboard
       </Heading>
+
+      <Flex
+        direction="column"
+        gap="3"
+        style={{
+          ...brandBackground,
+          border: 0,
+          padding: "var(--space-5)",
+          borderRadius: "var(--radius-4)",
+        }}
+        mb="4"
+      >
+        <Heading as="h2" size="5">
+          Welcome to Munch! 👋
+        </Heading>
+        <Text size="3">
+          Your personal meal management companion for kids. Track your favorite
+          dishes, organize them by categories, and never wonder what to cook
+          again. Draw random meals for inspiration or browse your recent entries
+          to plan your next delicious meal for the little ones.
+        </Text>
+      </Flex>
 
       <Grid columns={{ initial: "1", md: "2" }} gap="4">
         <Card size="3">
