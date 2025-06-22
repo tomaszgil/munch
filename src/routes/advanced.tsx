@@ -4,6 +4,8 @@ import { Box, Card, Flex, Heading, Text, Button } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealsReset } from "@/services/meals/useMealsReset";
+import { store } from "@/services/meals/store";
+import { parseMeal } from "@/services/meals/parse";
 import { DeleteAllMealsDialog } from "@/components/DeleteAllMealsDialog";
 
 export const Route = createFileRoute("/advanced")({
@@ -34,6 +36,52 @@ function Advanced() {
     toast.success("All meals have been deleted.");
   };
 
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = e.target?.result as string;
+          const parsedData = JSON.parse(content);
+
+          // Validate that the parsed data is an array
+          if (!Array.isArray(parsedData)) {
+            throw new Error("File must contain an array of meals");
+          }
+
+          // Validate each meal using the schema
+          const validatedMeals = parsedData.map((meal, index) => {
+            try {
+              return parseMeal(meal);
+            } catch (error) {
+              throw new Error(`Invalid meal at index ${index}`);
+            }
+          });
+
+          // Store the validated meals
+          store.set(validatedMeals);
+          toast.success(
+            `Successfully imported ${validatedMeals.length} meals.`
+          );
+        } catch (error) {
+          toast.error(
+            `Import failed: ${error instanceof Error ? error.message : "Invalid file format"}`
+          );
+        }
+      };
+
+      reader.readAsText(file);
+    };
+
+    input.click();
+  };
+
   return (
     <Box maxWidth="960px" mx="auto">
       <Heading as="h1" size="6" mt="4" mb="5">
@@ -52,6 +100,22 @@ function Advanced() {
             </Text>
             <Box>
               <Button onClick={handleExport}>Export meals</Button>
+            </Box>
+          </Flex>
+        </Card>
+
+        <Card size="3">
+          <Flex direction="column" gap="2">
+            <Heading as="h2" size="4">
+              Import Meals
+            </Heading>
+            <Text size="2" color="gray" mb="4">
+              Import meals from a JSON file. This will replace all existing
+              meals with the imported data. Make sure the file contains valid
+              meal data.
+            </Text>
+            <Box>
+              <Button onClick={handleImport}>Import meals</Button>
             </Box>
           </Flex>
         </Card>
