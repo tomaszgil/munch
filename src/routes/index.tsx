@@ -123,7 +123,7 @@ const AnimatedDrawer = function AnimatedDrawer({
             width: "100%",
             zIndex: index + 1,
             backgroundColor: "var(--color-panel-solid)",
-            animation: `slideUp 0.2s ease-in-out ${index * 0.2}s forwards`,
+            animation: `slideUp 0.3s ease-in-out ${index * 0.25}s forwards`,
             opacity: 0,
             transform: "translateY(40px)",
             pointerEvents:
