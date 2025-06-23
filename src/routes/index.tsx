@@ -14,7 +14,7 @@ import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { MealCard } from "@/components/MealCard";
 import type { MealCategory, Meal } from "@/services/meals/types";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useMealsByCategory } from "@/services/meals/useMealsByCategory";
 import { useBrandBackground } from "@/components/navigation/useBrandBackground";
@@ -96,6 +96,7 @@ const AnimatedDrawer = function AnimatedDrawer({
   items: Meal[];
   selectedItem: Meal | null;
 }) {
+  const count = useRef(0);
   const [animationItems, setAnimationItems] = useState<Meal[]>([]);
 
   useEffect(() => {
@@ -105,6 +106,7 @@ const AnimatedDrawer = function AnimatedDrawer({
         return items[randomIndex];
       });
 
+      count.current++;
       setAnimationItems([...rouletteItems, selectedItem]);
     }
   }, [selectedItem, items]);
@@ -113,7 +115,7 @@ const AnimatedDrawer = function AnimatedDrawer({
     <div style={{ position: "relative", minHeight: "80px" }}>
       {animationItems.map((meal, index) => (
         <div
-          key={`${meal.id}-${index}`}
+          key={`${count.current}-${index}`}
           style={{
             position: "absolute",
             top: 0,
@@ -121,7 +123,7 @@ const AnimatedDrawer = function AnimatedDrawer({
             width: "100%",
             zIndex: index + 1,
             backgroundColor: "var(--color-panel-solid)",
-            animation: `slideUp 0.6s ease-in-out ${index * 0.3}s forwards`,
+            animation: `slideUp 0.2s ease-in-out ${index * 0.2}s forwards`,
             opacity: 0,
             transform: "translateY(40px)",
             pointerEvents:
