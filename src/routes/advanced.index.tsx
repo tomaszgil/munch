@@ -8,7 +8,7 @@ import { store } from "@/services/meals/store";
 import { parseMeal } from "@/services/meals/parse";
 import { DeleteAllMealsDialog } from "@/components/DeleteAllMealsDialog";
 
-export const Route = createFileRoute("/advanced")({
+export const Route = createFileRoute("/advanced/")({
   component: Advanced,
 });
 
