@@ -1,290 +1,138 @@
-Welcome to your new TanStack app! 
+# Munch 🍽️
 
-# Getting Started
+A meal management application for kids that helps parents organize, discover, and manage your favorite recipes. Built as a playground to try out modern React technologies.
 
-To run this application:
+## About
 
-```bash
-pnpm install
-pnpm start  
+Munch is a meal-tracking application designed to solve the everyday problem of "What can I make for my kid to eat?" It allows you to maintain a personal database of meals, categorize them, and randomly select meals when you're indecisive.
+
+### Why Munch Exists
+
+- **Personal Utility**: Munch helps you maintain a personal meal database and randomly selects meals for you
+- **Technology Showcase**: Demonstrates modern React patterns using TanStack Router for type-safe routing and Zod for runtime validation
+- **Learning Platform**: A playground for experimenting with a few frontend technologies
+
+## Features
+
+### Core Functionality
+
+- **Meal Management** 🍽️: Create, edit, delete, and duplicate meals with ingredients and categories
+- **Categorization** 🏷️: Organize meals by type (Breakfast, Lunch, Dinner, Snack)
+- **Random Meal Selection** 🎲: Get random meal suggestions with animated selection
+- **Search & Filter** 🔍: Find meals by name or filter by category
+- **Recent Meals** ⏰: Quick access to your recently updated meals
+
+### Advanced Features
+
+- **Data Export/Import**: Backup and restore your meal database via JSON files
+- **Analytics**: View meal statistics and category breakdowns
+
+### User Experience
+
+- **Modern UI**: Built with Radix UI components for consistent, accessible design
+- **Toast Notifications**: Real-time feedback for user actions
+- **Error Handling**: Error boundaries and schema validation
+- **Privacy-Focused**: All data stays on your device - no cloud storage or data collection
+- **Local-First**: Works offline with local storage, no internet required
+- **Cross-Platform**: Responsive design that works on desktop, installable on mobile
+- **Dark/Light Mode**: Automatic theme switching based on system preferences
+
+## Technology Stack
+
+### Core Technologies
+
+- **React 19** - Latest React with concurrent features
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and development server
+
+### Routing & State Management
+
+- **TanStack Router** - Type-safe routing with file-based routing
+- **Local Storage** - Persistent client-side data storage
+
+### UI & Styling
+
+- **Radix UI** - Accessible, unstyled UI components
+- **Radix Themes** - Design system and theming
+- **CSS Variables** - Dynamic theming support
+
+### Validation & Utilities
+
+- **Zod** - Runtime type validation and schema definition
+
+## Development
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- pnpm (recommended) or npm
+
+### Getting Started
+
+1. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Start the development server**
+
+   ```bash
+   pnpm dev
+   ```
+
+3. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+### Available Scripts
+
+- `pnpm dev` - Start development server on port 3000
+- `pnpm build` - Build for production
+- `pnpm serve` - Preview production build
+- `pnpm test` - Run test suite
+
+### Project Structure
+
+```
+src/
+├── components/         # Reusable UI components
+│   ├── navigation/     # Navigation components
+│   └── theme/          # Theme context and utilities
+├── routes/             # TanStack Router file-based routes
+├── services/           # Business logic and data management
+│   └── meals/          # Meal-related services and hooks
+├── utils/              # Utility functions
+└── styles.css          # Global styles
 ```
 
-# Building For Production
+### Key Development Patterns
 
-To build this application for production:
+- **File-based Routing**: Routes are automatically generated from the `routes/` directory
+- **Type-safe APIs**: All data operations are validated with Zod schemas
+- **Custom Hooks**: Business logic is encapsulated in reusable hooks
+- **Component Composition**: Radix UI components are composed for consistent design
+- **Error Boundaries**: Graceful error handling throughout the application
 
-```bash
-pnpm build
-```
+### Data Persistence
 
-## Testing
+Munch uses browser localStorage for data persistence. The app includes:
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+- Automatic data validation on import
+- Export functionality for backups
+- Reset capabilities for testing
+
+### Testing
+
+The project includes a testing setup with Vitest and React Testing Library. Run tests with:
 
 ```bash
 pnpm test
 ```
 
-## Styling
+## Contributing
 
-This project uses CSS for styling.
+This is a personal project, but feel free to explore the codebase and learn from the implementation patterns. The code is structured to be educational and demonstrate modern React best practices.
 
+## License
 
-
-
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+This project is for personal use and educational purposes.
