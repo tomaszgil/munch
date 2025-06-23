@@ -1,6 +1,6 @@
 # Munch 🍽️
 
-A meal management application for kids that helps parents organize, discover, and manage your favorite recipes. Built as a playground to try out modern React technologies.
+A meal management application for kids that helps parents organize, discover, and manage thier favorite recipes. Built as a playground to try out modern React technologies.
 
 ## About
 
@@ -8,7 +8,7 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 
 ### Why Munch Exists
 
-- **Personal Utility**: Munch helps you maintain a personal meal database and randomly selects meals for you
+- **Personal Utility**: Munch helps me maintain a personal meal database and randomly selects meals for my kids
 - **Technology Showcase**: Demonstrates modern React patterns using TanStack Router for type-safe routing and Zod for runtime validation
 - **Learning Platform**: A playground for experimenting with a few frontend technologies
 
@@ -24,18 +24,18 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 
 ### Advanced Features
 
-- **Data Export/Import**: Backup and restore your meal database via JSON files
-- **Analytics**: View meal statistics and category breakdowns
+- **Data Export/Import** 📁: Backup and restore your meal database via JSON files
+- **Analytics** 📊: View meal statistics and category breakdowns
 
 ### User Experience
 
-- **Modern UI**: Built with Radix UI components for consistent, accessible design
-- **Toast Notifications**: Real-time feedback for user actions
-- **Error Handling**: Error boundaries and schema validation
-- **Privacy-Focused**: All data stays on your device - no cloud storage or data collection
-- **Local-First**: Works offline with local storage, no internet required
-- **Cross-Platform**: Responsive design that works on desktop, installable on mobile
-- **Dark/Light Mode**: Automatic theme switching based on system preferences
+- **Modern UI** 🎨: Built with Radix UI components for consistent, accessible design
+- **Toast Notifications** 🔔: Real-time feedback for user actions
+- **Error Handling** 🛡️: Error boundaries and schema validation
+- **Privacy-Focused** 🔒: All data stays on your device - no cloud storage or data collection
+- **Local-First** 💾: Works offline with local storage, no internet required
+- **Cross-Platform** 📱: Responsive design that works on desktop, installable on mobile
+- **Dark/Light Mode** 🌓: Automatic theme switching based on system preferences
 
 ## Technology Stack
 
@@ -115,7 +115,7 @@ src/
 
 ### Data Persistence
 
-Munch uses browser localStorage for data persistence. The app includes:
+Munch uses browser `localStorage` for data persistence. The app includes:
 
 - Automatic data validation on import
 - Export functionality for backups
