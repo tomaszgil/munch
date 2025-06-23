@@ -1,10 +1,17 @@
 import { z } from "zod/v4";
 
+export const MealCategorySchema = z.enum([
+  "breakfast",
+  "lunch",
+  "dinner",
+  "snack",
+]);
+
 export const MealSchema = z.object({
   id: z.string(),
   name: z.string(),
   ingredients: z.array(z.string()),
-  category: z.enum(["breakfast", "lunch", "dinner", "snack"]),
+  category: MealCategorySchema,
   createdAt: z.string(),
   updatedAt: z.string(),
 });

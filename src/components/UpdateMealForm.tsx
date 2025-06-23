@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import type { MealCategory } from "@/services/meals/types";
+import { MealCategorySchema, type MealCategory } from "@/services/meals/types";
 import { PlusIcon, Cross2Icon, InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   Button,
@@ -14,7 +14,7 @@ import { z } from "zod/v4";
 
 const mealFormSchema = z.object({
   name: z.string().min(1, "Meal name is required."),
-  category: z.enum(["breakfast", "lunch", "dinner", "snack"] as const),
+  category: MealCategorySchema,
   ingredients: z
     .array(z.string().min(1, "Ingredient cannot be empty."))
     .min(1, "At least one ingredient is required."),

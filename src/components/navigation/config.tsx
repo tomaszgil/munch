@@ -1,4 +1,9 @@
-import { DashboardIcon, FileTextIcon, GearIcon } from "@radix-ui/react-icons";
+import {
+  DashboardIcon,
+  FileTextIcon,
+  GearIcon,
+  MagicWandIcon,
+} from "@radix-ui/react-icons";
 
 export const navConfig = [
   {
@@ -10,6 +15,11 @@ export const navConfig = [
     label: "Meals",
     icon: <FileTextIcon />,
     to: "/meals",
+  },
+  {
+    label: "Generate",
+    icon: <MagicWandIcon />,
+    to: "/generate",
   },
   {
     label: "Advanced",

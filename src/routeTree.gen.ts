@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as MealsIndexImport } from './routes/meals.index'
+import { Route as GenerateIndexImport } from './routes/generate.index'
 import { Route as AdvancedIndexImport } from './routes/advanced.index'
 import { Route as MealsMealIdImport } from './routes/meals.$mealId'
 
@@ -27,6 +28,12 @@ const IndexRoute = IndexImport.update({
 const MealsIndexRoute = MealsIndexImport.update({
   id: '/meals/',
   path: '/meals/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GenerateIndexRoute = GenerateIndexImport.update({
+  id: '/generate/',
+  path: '/generate/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +74,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdvancedIndexImport
       parentRoute: typeof rootRoute
     }
+    '/generate/': {
+      id: '/generate/'
+      path: '/generate'
+      fullPath: '/generate'
+      preLoaderRoute: typeof GenerateIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/meals/': {
       id: '/meals/'
       path: '/meals'
@@ -83,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/meals/$mealId': typeof MealsMealIdRoute
   '/advanced': typeof AdvancedIndexRoute
+  '/generate': typeof GenerateIndexRoute
   '/meals': typeof MealsIndexRoute
 }
 
@@ -90,6 +105,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/meals/$mealId': typeof MealsMealIdRoute
   '/advanced': typeof AdvancedIndexRoute
+  '/generate': typeof GenerateIndexRoute
   '/meals': typeof MealsIndexRoute
 }
 
@@ -98,15 +114,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/meals/$mealId': typeof MealsMealIdRoute
   '/advanced/': typeof AdvancedIndexRoute
+  '/generate/': typeof GenerateIndexRoute
   '/meals/': typeof MealsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/meals/$mealId' | '/advanced' | '/meals'
+  fullPaths: '/' | '/meals/$mealId' | '/advanced' | '/generate' | '/meals'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/meals/$mealId' | '/advanced' | '/meals'
-  id: '__root__' | '/' | '/meals/$mealId' | '/advanced/' | '/meals/'
+  to: '/' | '/meals/$mealId' | '/advanced' | '/generate' | '/meals'
+  id:
+    | '__root__'
+    | '/'
+    | '/meals/$mealId'
+    | '/advanced/'
+    | '/generate/'
+    | '/meals/'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +137,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MealsMealIdRoute: typeof MealsMealIdRoute
   AdvancedIndexRoute: typeof AdvancedIndexRoute
+  GenerateIndexRoute: typeof GenerateIndexRoute
   MealsIndexRoute: typeof MealsIndexRoute
 }
 
@@ -121,6 +145,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MealsMealIdRoute: MealsMealIdRoute,
   AdvancedIndexRoute: AdvancedIndexRoute,
+  GenerateIndexRoute: GenerateIndexRoute,
   MealsIndexRoute: MealsIndexRoute,
 }
 
@@ -137,6 +162,7 @@ export const routeTree = rootRoute
         "/",
         "/meals/$mealId",
         "/advanced/",
+        "/generate/",
         "/meals/"
       ]
     },
@@ -148,6 +174,9 @@ export const routeTree = rootRoute
     },
     "/advanced/": {
       "filePath": "advanced.index.tsx"
+    },
+    "/generate/": {
+      "filePath": "generate.index.tsx"
     },
     "/meals/": {
       "filePath": "meals.index.tsx"
