@@ -6,7 +6,6 @@ import {
   Flex,
   Heading,
   IconButton,
-  DataList,
   Button,
   Separator,
   Text,
@@ -21,7 +20,7 @@ import { useMealQuery } from "@/services/meals/useMealQuery";
 import { useMealDelete } from "@/services/meals/useMealDelete";
 import { useMealUpdate } from "@/services/meals/useMealUpdate";
 import { ChevronLeftIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { CategoryBadge } from "@/components/CategoryBadge";
+import { MealDetails } from "@/components/MealDetails";
 import { UpdateMealDialog } from "@/components/UpdateMealDialog";
 import { DeleteMealDialog } from "@/components/DeleteMealDialog";
 import { ContentErrorBoundary } from "@/components/ContentErrorBoundary";
@@ -122,28 +121,7 @@ function RouteComponent() {
           </Flex>
           <Separator orientation="horizontal" size="4" my="5" />
 
-          <DataList.Root>
-            <DataList.Item>
-              <DataList.Label>Name</DataList.Label>
-              <DataList.Value>{meal.name}</DataList.Value>
-            </DataList.Item>
-            <DataList.Item>
-              <DataList.Label>Category</DataList.Label>
-              <DataList.Value>
-                <CategoryBadge category={meal.category} />
-              </DataList.Value>
-            </DataList.Item>
-            <DataList.Item>
-              <DataList.Label>Ingredients</DataList.Label>
-              <DataList.Value>
-                <ol style={{ margin: 0, paddingLeft: "1rem" }}>
-                  {meal.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ol>
-              </DataList.Value>
-            </DataList.Item>
-          </DataList.Root>
+          <MealDetails meal={meal} />
         </Card>
       </Box>
 

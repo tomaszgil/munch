@@ -1,5 +1,7 @@
 import { MealSuggestionCard } from "@/components/MealCard";
+import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
 import { parseMealCreate } from "@/services/meals/parse";
+import type { MealCreate } from "@/services/meals/types";
 import { EyeOpenIcon, MagicWandIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
@@ -46,12 +48,12 @@ const exampleMeals = [
 
 function getSystemPrompt() {
   return [
-    "You are a helpful assistant specialized in generating meals for kids.",
-    "If asked for anything else than generating a meal, apologize and say you're not able to help with that. You are only able to generate meals.",
+    "You are a helpful specialized assistant only capable of generating meals for kids.",
+    "Never suggest anything else than generating a meal. If asked for anything else than generating a meal, apologize and say you're not able to help with that. You are only able to generate meals.",
     `Here is a list of example meals, which you can use to generate new ones: ${JSON.stringify(
       exampleMeals
     )}`,
-    'Here is a structure of a meal: `{ category: "breakfast" | "lunch" | "dinner" | "snack"; name: string; ingredients: string[]; }`. When suggesting a meal, surround the whole meal with ```json and ```',
+    'Here is a structure of a meal: `{ category: "breakfast" | "lunch" | "dinner" | "snack"; name: string; ingredients: string[]; }`. When suggesting meals, surround the whole response with ```json and ```. You can suggest multiple meals by providing an array of meal objects.',
   ].join("\n");
 }
 
@@ -87,7 +89,6 @@ function GenerateForm({
   const [content, setContent] = useState("");
 
   const handlePrompt = () => {
-    setContent("");
     onMessageCreate({ role: "user", content });
     generateMeal(content).then((result) => {
       onMessageCreate({ role: "assistant", content: result });
@@ -116,7 +117,7 @@ function GenerateForm({
         contentEditable
         suppressContentEditableWarning
         role="textbox"
-        aria-label="Generate a meal prompt"
+        aria-label="Meal prompt"
         aria-multiline="true"
         tabIndex={0}
         onInput={(e) => setContent(e.currentTarget.textContent || "")}
@@ -135,7 +136,7 @@ function GenerateForm({
           fontSize: "var(--font-size-3)",
           lineHeight: "var(--line-height-3)",
         }}
-        data-placeholder="Generate a meal for a lunch with tomato, chicken, and rice..."
+        data-placeholder="Generate meals for a lunch with tomato, chicken, and rice..."
       />
       <Box position="absolute" bottom="0" right="0" p="4">
         <IconButton size="3" type="submit">
@@ -169,14 +170,50 @@ function UserMessage({ content }: { content: string }) {
   );
 }
 
+function MealSuggestion({ meal }: { meal: MealCreate }) {
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+
+  const handleAddToMenu = (mealToAdd: MealCreate) => {
+    // TODO: Implement add to menu functionality
+    console.log("Adding to menu:", mealToAdd);
+  };
+
+  return (
+    <Box>
+      <MealSuggestionCard meal={meal} />
+      <Flex justify="end" gap="2" mt="3">
+        <Button
+          variant="soft"
+          color="gray"
+          onClick={() => setIsDetailsDialogOpen(true)}
+        >
+          <EyeOpenIcon />
+          See details
+        </Button>
+        <Button variant="soft" color="gray">
+          <PlusIcon />
+          Add to menu
+        </Button>
+      </Flex>
+
+      <MealSuggestionDetailsDialog
+        isOpen={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
+        meal={meal}
+        onAddToMenu={handleAddToMenu}
+      />
+    </Box>
+  );
+}
+
 function AssistantMessage({ content }: { content: string }) {
-  const mealData = (() => {
+  const mealsData = (() => {
     const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
     if (jsonMatch) {
       try {
-        // add support for multiline meal data
         const json = JSON.parse(jsonMatch[1]);
-        return parseMealCreate(json);
+        const meals = Array.isArray(json) ? json : [json];
+        return meals.map(parseMealCreate);
       } catch (e) {
         // add error handling
         return null;
@@ -185,22 +222,16 @@ function AssistantMessage({ content }: { content: string }) {
     return null;
   })();
 
-  if (mealData) {
+  if (mealsData) {
     return (
       <Box>
         <Text as="p" mb="3">
-          Here's a meal suggestion for you:
+          Here are some meal suggestions for you:
         </Text>
-        <MealSuggestionCard meal={mealData} />
-        <Flex justify="end" gap="2" mt="3">
-          <Button variant="soft" color="gray">
-            <EyeOpenIcon />
-            See details
-          </Button>
-          <Button variant="soft" color="gray">
-            <PlusIcon />
-            Add to menu
-          </Button>
+        <Flex direction="column" gap="3">
+          {mealsData.map((meal, index) => (
+            <MealSuggestion key={index} meal={meal} />
+          ))}
         </Flex>
       </Box>
     );
@@ -218,7 +249,7 @@ function Message({ message }: { message: Message }) {
 
 function Messages({ messages }: { messages: Message[] }) {
   return (
-    <Flex direction="column" gap="5">
+    <Flex direction="column" gap="6">
       {messages.map((message) => (
         <Message key={message.content} message={message} />
       ))}
