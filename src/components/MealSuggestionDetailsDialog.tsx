@@ -6,7 +6,7 @@ interface MealSuggestionDetailsDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   meal: MealCreate;
-  onAddToMenu: (meal: MealCreate) => void;
+  onAddToMenu: () => void;
 }
 
 export function MealSuggestionDetailsDialog({
@@ -16,7 +16,7 @@ export function MealSuggestionDetailsDialog({
   onAddToMenu,
 }: MealSuggestionDetailsDialogProps) {
   const handleAddToMenu = () => {
-    onAddToMenu(meal);
+    onAddToMenu();
     onOpenChange(false);
   };
 
@@ -24,13 +24,13 @@ export function MealSuggestionDetailsDialog({
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: 450 }}>
         <Dialog.Title>Meal Details Suggestion</Dialog.Title>
-        <Dialog.Description mb="4">
+        <Dialog.Description mb="5">
           View the details of this meal suggestion.
         </Dialog.Description>
 
         <MealDetails meal={meal} />
 
-        <Flex gap="3" mt="4" justify="end">
+        <Flex gap="3" mt="5" justify="end">
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Close

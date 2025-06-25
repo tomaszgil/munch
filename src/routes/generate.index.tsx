@@ -2,10 +2,12 @@ import { MealSuggestionCard } from "@/components/MealCard";
 import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
 import { parseMealCreate } from "@/services/meals/parse";
 import type { MealCreate } from "@/services/meals/types";
+import { useMealCreate } from "@/services/meals/useMealCreate";
 import { EyeOpenIcon, MagicWandIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/generate/")({
   component: Generate,
@@ -171,11 +173,12 @@ function UserMessage({ content }: { content: string }) {
 }
 
 function MealSuggestion({ meal }: { meal: MealCreate }) {
+  const createMeal = useMealCreate();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
-  const handleAddToMenu = (mealToAdd: MealCreate) => {
-    // TODO: Implement add to menu functionality
-    console.log("Adding to menu:", mealToAdd);
+  const onAddToMenu = () => {
+    createMeal(meal);
+    toast.success(`You have added ${meal.name} to the menu.`);
   };
 
   return (
@@ -190,7 +193,7 @@ function MealSuggestion({ meal }: { meal: MealCreate }) {
           <EyeOpenIcon />
           See details
         </Button>
-        <Button variant="soft" color="gray">
+        <Button variant="soft" color="gray" onClick={onAddToMenu}>
           <PlusIcon />
           Add to menu
         </Button>
@@ -200,7 +203,7 @@ function MealSuggestion({ meal }: { meal: MealCreate }) {
         isOpen={isDetailsDialogOpen}
         onOpenChange={setIsDetailsDialogOpen}
         meal={meal}
-        onAddToMenu={handleAddToMenu}
+        onAddToMenu={onAddToMenu}
       />
     </Box>
   );
