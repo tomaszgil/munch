@@ -1,5 +1,7 @@
-import { MagicWandIcon } from "@radix-ui/react-icons";
-import { Box, Card, Flex, Heading, IconButton } from "@radix-ui/themes";
+import { MealSuggestionCard } from "@/components/MealCard";
+import { parseMealCreate } from "@/services/meals/parse";
+import { EyeOpenIcon, MagicWandIcon, PlusIcon } from "@radix-ui/react-icons";
+import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -53,18 +55,26 @@ function getSystemPrompt() {
   ].join("\n");
 }
 
-async function generateMeal(prompt: string) {
-  // @ts-expect-error
-  const session = await LanguageModel.create({
-    initialPrompts: [
-      {
-        role: "system",
-        content: getSystemPrompt(),
-      },
-    ],
-  });
+let session: any = null;
 
-  // Prompt the model and wait for the whole result to come back.
+async function getSession() {
+  if (!session) {
+    // @ts-expect-error
+    session = await LanguageModel.create({
+      initialPrompts: [
+        {
+          role: "system",
+          content: getSystemPrompt(),
+        },
+      ],
+    });
+  }
+
+  return session;
+}
+
+async function generateMeal(prompt: string) {
+  const session = await getSession();
   const result = await session.prompt(prompt);
   return result;
 }
@@ -77,6 +87,7 @@ function GenerateForm({
   const [content, setContent] = useState("");
 
   const handlePrompt = () => {
+    setContent("");
     onMessageCreate({ role: "user", content });
     generateMeal(content).then((result) => {
       onMessageCreate({ role: "assistant", content: result });
@@ -108,9 +119,7 @@ function GenerateForm({
         aria-label="Generate a meal prompt"
         aria-multiline="true"
         tabIndex={0}
-        onInput={(e: React.FormEvent<HTMLDivElement>) =>
-          setContent(e.currentTarget.textContent || "")
-        }
+        onInput={(e) => setContent(e.currentTarget.textContent || "")}
         onKeyDown={handleKeyDown}
         style={{
           width: "100%",
@@ -121,7 +130,7 @@ function GenerateForm({
           boxShadow: "var(--shadow-3)",
           outline: "none",
           border: "1px solid transparent",
-          backgroundColor: "var(--color-surface)",
+          backgroundColor: "var(--color-panel-solid)",
           color: "var(--color-foreground)",
           fontSize: "var(--font-size-3)",
           lineHeight: "var(--line-height-3)",
@@ -142,21 +151,74 @@ type Message = {
   content: string;
 };
 
-function Message({ message }: { message: Message }) {
-  if (message.role === "user") {
+function UserMessage({ content }: { content: string }) {
+  return (
+    <Flex justify="end">
+      <Box maxWidth="70%">
+        <Box
+          p="4"
+          style={{
+            borderRadius: "var(--radius-5)",
+            backgroundColor: "var(--accent-3)",
+          }}
+        >
+          {content}
+        </Box>
+      </Box>
+    </Flex>
+  );
+}
+
+function AssistantMessage({ content }: { content: string }) {
+  const mealData = (() => {
+    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+    if (jsonMatch) {
+      try {
+        // add support for multiline meal data
+        const json = JSON.parse(jsonMatch[1]);
+        return parseMealCreate(json);
+      } catch (e) {
+        // add error handling
+        return null;
+      }
+    }
+    return null;
+  })();
+
+  if (mealData) {
     return (
       <Box>
-        <Card>{message.content}</Card>
+        <Text as="p" mb="3">
+          Here's a meal suggestion for you:
+        </Text>
+        <MealSuggestionCard meal={mealData} />
+        <Flex justify="end" gap="2" mt="3">
+          <Button variant="soft" color="gray">
+            <EyeOpenIcon />
+            See details
+          </Button>
+          <Button variant="soft" color="gray">
+            <PlusIcon />
+            Add to menu
+          </Button>
+        </Flex>
       </Box>
     );
   }
+  return <Box>{content}</Box>;
+}
 
-  return <Box>{message.content}</Box>;
+function Message({ message }: { message: Message }) {
+  if (message.role === "user") {
+    return <UserMessage content={message.content} />;
+  }
+
+  return <AssistantMessage content={message.content} />;
 }
 
 function Messages({ messages }: { messages: Message[] }) {
   return (
-    <Flex direction="column" gap="4">
+    <Flex direction="column" gap="5">
       {messages.map((message) => (
         <Message key={message.content} message={message} />
       ))}
