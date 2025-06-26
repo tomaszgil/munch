@@ -90,40 +90,26 @@ async function generateMeal(prompt: string, options: { signal: AbortSignal }) {
 }
 
 function PromptForm({
-  onMessageCreate,
+  onSubmit,
+  isLoading,
+  onAbort,
 }: {
-  onMessageCreate: (message: Message) => void;
+  onSubmit: (prompt: string) => void;
+  isLoading: boolean;
+  onAbort: () => void;
 }) {
   const [prompt, setPrompt] = useState("");
-  const promptAbortController = useRef<AbortController>(new AbortController());
-  const promptExecuteFn = useCallback(async () => {
-    const result = await generateMeal(prompt, {
-      signal: promptAbortController.current.signal,
-    });
-    onMessageCreate({ role: "assistant", content: result || "" });
-  }, [prompt]);
-
-  const [promptExecute, promptState] = useLazyAsync(promptExecuteFn);
-
-  const handlePrompt = () => {
-    onMessageCreate({ role: "user", content: prompt });
-    promptExecute();
-  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handlePrompt();
+    onSubmit(prompt);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handlePrompt();
+      onSubmit(prompt);
     }
-  };
-
-  const handleAbort = () => {
-    promptAbortController.current.abort();
   };
 
   return (
@@ -158,17 +144,12 @@ function PromptForm({
         data-placeholder="Generate meals for a lunch with tomato, chicken, and rice..."
       />
       <Flex position="absolute" bottom="0" right="0" p="4" gap="2">
-        {promptState.isLoading && (
-          <IconButton
-            size="3"
-            type="button"
-            onClick={handleAbort}
-            variant="soft"
-          >
+        {isLoading && (
+          <IconButton size="3" type="button" onClick={onAbort} variant="soft">
             <StopIcon />
           </IconButton>
         )}
-        {!promptState.isLoading && (
+        {!isLoading && (
           <IconButton size="3" type="submit">
             <MagicWandIcon />
           </IconButton>
@@ -291,10 +272,12 @@ function Messages({ messages }: { messages: Message[] }) {
 
 function Feed({
   messages,
-  promptForm,
+  isLoading,
+  form,
 }: {
   messages: Message[];
-  promptForm: React.ReactNode;
+  isLoading: boolean;
+  form: React.ReactNode;
 }) {
   if (messages.length === 0) {
     return (
@@ -310,16 +293,30 @@ function Feed({
         <Heading as="h1" size="6">
           What's on the menu today?
         </Heading>
-        {promptForm}
+        {form}
       </Flex>
     );
   }
 
   return (
     <Box maxWidth="640px" mx="auto" minHeight="100%" position="relative">
-      <Messages messages={messages} />
-      <Box position="sticky" bottom="var(--space-3)" left="0" right="0">
-        {promptForm}
+      <Flex direction="column" gap="6" width="100%">
+        <Messages messages={messages} />
+        {isLoading && (
+          <Box
+            as="div"
+            style={{
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              backgroundColor: "var(--accent-9)",
+              animation: "pulse 1.5s ease-in-out infinite",
+            }}
+          />
+        )}
+      </Flex>
+      <Box position="absolute" bottom="var(--space-3)" left="0" right="0">
+        {form}
       </Box>
     </Box>
   );
@@ -327,7 +324,21 @@ function Feed({
 
 function Generate() {
   const { available } = useLoaderData({ from: Route.id });
+
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const promptAbortController = useRef<AbortController>(new AbortController());
+  const promptExecuteFn = useCallback(async (prompt: string) => {
+    const result = await generateMeal(prompt, {
+      signal: promptAbortController.current.signal,
+    });
+    setMessages((messages) => [
+      ...messages,
+      { role: "assistant", content: result || "" },
+    ]);
+  }, []);
+
+  const [promptExecute, promptState] = useLazyAsync(promptExecuteFn);
 
   if (available === "unavailable") {
     // TODO: render a nice error message
@@ -337,11 +348,21 @@ function Generate() {
   return (
     <Feed
       messages={messages}
-      promptForm={
+      isLoading={promptState.isLoading}
+      form={
         <PromptForm
-          onMessageCreate={(message) =>
-            setMessages((messages) => [...messages, message])
-          }
+          isLoading={promptState.isLoading}
+          onSubmit={(prompt) => {
+            setMessages((messages) => [
+              ...messages,
+              { role: "user", content: prompt },
+            ]);
+
+            promptExecute(prompt);
+          }}
+          onAbort={() => {
+            promptAbortController.current.abort();
+          }}
         />
       }
     />

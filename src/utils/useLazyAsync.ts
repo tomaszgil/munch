@@ -17,14 +17,14 @@ type AsyncState<T> = {
   isIdle: boolean;
 };
 
-type UseLazyAsyncReturn<T> = [
-  (signal?: AbortSignal) => Promise<T | null>,
+type UseLazyAsyncReturn<T, Args extends any[]> = [
+  (...args: Args) => Promise<T | null>,
   AsyncState<T>,
 ];
 
-export function useLazyAsync<T>(
-  asyncFn: (signal?: AbortSignal) => Promise<T>
-): UseLazyAsyncReturn<T> {
+export function useLazyAsync<T, Args extends any[]>(
+  asyncFn: (...args: Args) => Promise<T>
+): UseLazyAsyncReturn<T, Args> {
   const [state, setState] = useState<InternalAsyncState<T>>({
     data: null,
     error: null,
@@ -32,7 +32,7 @@ export function useLazyAsync<T>(
   });
 
   const execute = useCallback(
-    async (signal?: AbortSignal): Promise<T | null> => {
+    async (...args: Args): Promise<T | null> => {
       setState({
         data: null,
         error: null,
@@ -40,7 +40,7 @@ export function useLazyAsync<T>(
       });
 
       try {
-        const result = await asyncFn(signal);
+        const result = await asyncFn(...args);
         setState({
           data: result,
           error: null,
