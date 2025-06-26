@@ -28,20 +28,21 @@ export const store = {
     window.dispatchEvent(new Event("storage"));
   },
   delete: (id: string) => {
-    const deletedMeal = resultParsed.find((meal) => meal.id === id);
-    const updatedMeals = resultParsed.filter((meal) => meal.id !== id);
+    const meals = store.get();
+    const deletedMeal = meals.find((meal) => meal.id === id);
+    const updatedMeals = meals.filter((meal) => meal.id !== id);
     store.set(updatedMeals);
     return deletedMeal;
   },
   update: (id: string, updates: Partial<Meal>) => {
-    const updatedMeals = resultParsed.map((meal) =>
-      meal.id === id ? { ...meal, ...updates } : meal
-    );
+    const updatedMeals = store
+      .get()
+      .map((meal) => (meal.id === id ? { ...meal, ...updates } : meal));
     store.set(updatedMeals);
     return updatedMeals.find((meal) => meal.id === id);
   },
   create: (meal: Meal) => {
-    const updatedMeals = [...resultParsed, meal];
+    const updatedMeals = [...store.get(), meal];
     store.set(updatedMeals);
     return meal;
   },

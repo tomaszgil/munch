@@ -3,10 +3,16 @@ import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsD
 import { parseMealCreate } from "@/services/meals/parse";
 import type { MealCreate } from "@/services/meals/types";
 import { useMealCreate } from "@/services/meals/useMealCreate";
-import { EyeOpenIcon, MagicWandIcon, PlusIcon } from "@radix-ui/react-icons";
+import { useLazyAsync } from "@/utils/useLazyAsync";
+import {
+  EyeOpenIcon,
+  MagicWandIcon,
+  PlusIcon,
+  StopIcon,
+} from "@radix-ui/react-icons";
 import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/generate/")({
@@ -77,24 +83,31 @@ async function getSession() {
   return session;
 }
 
-async function generateMeal(prompt: string) {
+async function generateMeal(prompt: string, options: { signal: AbortSignal }) {
   const session = await getSession();
-  const result = await session.prompt(prompt);
+  const result = await session.prompt(prompt, options);
   return result;
 }
 
-function GenerateForm({
+function PromptForm({
   onMessageCreate,
 }: {
   onMessageCreate: (message: Message) => void;
 }) {
-  const [content, setContent] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const promptAbortController = useRef<AbortController>(new AbortController());
+  const promptExecuteFn = useCallback(async () => {
+    const result = await generateMeal(prompt, {
+      signal: promptAbortController.current.signal,
+    });
+    onMessageCreate({ role: "assistant", content: result || "" });
+  }, [prompt]);
+
+  const [promptExecute, promptState] = useLazyAsync(promptExecuteFn);
 
   const handlePrompt = () => {
-    onMessageCreate({ role: "user", content });
-    generateMeal(content).then((result) => {
-      onMessageCreate({ role: "assistant", content: result });
-    });
+    onMessageCreate({ role: "user", content: prompt });
+    promptExecute();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -107,6 +120,10 @@ function GenerateForm({
       e.preventDefault();
       handlePrompt();
     }
+  };
+
+  const handleAbort = () => {
+    promptAbortController.current.abort();
   };
 
   return (
@@ -122,7 +139,7 @@ function GenerateForm({
         aria-label="Meal prompt"
         aria-multiline="true"
         tabIndex={0}
-        onInput={(e) => setContent(e.currentTarget.textContent || "")}
+        onInput={(e) => setPrompt(e.currentTarget.textContent || "")}
         onKeyDown={handleKeyDown}
         style={{
           width: "100%",
@@ -140,11 +157,23 @@ function GenerateForm({
         }}
         data-placeholder="Generate meals for a lunch with tomato, chicken, and rice..."
       />
-      <Box position="absolute" bottom="0" right="0" p="4">
-        <IconButton size="3" type="submit">
-          <MagicWandIcon />
-        </IconButton>
-      </Box>
+      <Flex position="absolute" bottom="0" right="0" p="4" gap="2">
+        {promptState.isLoading && (
+          <IconButton
+            size="3"
+            type="button"
+            onClick={handleAbort}
+            variant="soft"
+          >
+            <StopIcon />
+          </IconButton>
+        )}
+        {!promptState.isLoading && (
+          <IconButton size="3" type="submit">
+            <MagicWandIcon />
+          </IconButton>
+        )}
+      </Flex>
     </form>
   );
 }
@@ -260,15 +289,13 @@ function Messages({ messages }: { messages: Message[] }) {
   );
 }
 
-function Generate() {
-  const { available } = useLoaderData({ from: Route.id });
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  if (available === "unavailable") {
-    // TODO: render a nice error message
-    return <div>Language model is not available</div>;
-  }
-
+function Feed({
+  messages,
+  promptForm,
+}: {
+  messages: Message[];
+  promptForm: React.ReactNode;
+}) {
   if (messages.length === 0) {
     return (
       <Flex
@@ -283,11 +310,7 @@ function Generate() {
         <Heading as="h1" size="6">
           What's on the menu today?
         </Heading>
-        <GenerateForm
-          onMessageCreate={(message) =>
-            setMessages((messages) => [...messages, message])
-          }
-        />
+        {promptForm}
       </Flex>
     );
   }
@@ -295,13 +318,32 @@ function Generate() {
   return (
     <Box maxWidth="640px" mx="auto" minHeight="100%" position="relative">
       <Messages messages={messages} />
-      <Box position="absolute" bottom="0" left="0" right="0">
-        <GenerateForm
+      <Box position="sticky" bottom="var(--space-3)" left="0" right="0">
+        {promptForm}
+      </Box>
+    </Box>
+  );
+}
+
+function Generate() {
+  const { available } = useLoaderData({ from: Route.id });
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  if (available === "unavailable") {
+    // TODO: render a nice error message
+    return <div>Language model is not available</div>;
+  }
+
+  return (
+    <Feed
+      messages={messages}
+      promptForm={
+        <PromptForm
           onMessageCreate={(message) =>
             setMessages((messages) => [...messages, message])
           }
         />
-      </Box>
-    </Box>
+      }
+    />
   );
 }
