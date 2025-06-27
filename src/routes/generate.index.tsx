@@ -12,7 +12,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useLayoutEffect } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/generate/")({
@@ -264,8 +264,8 @@ function Message({ message }: { message: Message }) {
 function Messages({ messages }: { messages: Message[] }) {
   return (
     <Flex direction="column" gap="6">
-      {messages.map((message) => (
-        <Message key={message.content} message={message} />
+      {messages.map((message, index) => (
+        <Message key={index} message={message} />
       ))}
     </Flex>
   );
@@ -280,6 +280,14 @@ function Feed({
   isLoading: boolean;
   form: React.ReactNode;
 }) {
+  // Auto-scroll to bottom when messages change
+  useLayoutEffect(() => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages.length, isLoading]);
+
   if (messages.length === 0) {
     return (
       <Flex
@@ -290,6 +298,7 @@ function Feed({
         justify="center"
         align="center"
         gap="6"
+        py="9"
       >
         <Heading as="h1" size="6">
           What's on the menu today?
