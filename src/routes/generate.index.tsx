@@ -311,7 +311,7 @@ function Feed({
         }}
       >
         <Messages messages={messages} />
-        {true && (
+        {isLoading && (
           <Box
             as="div"
             width="24px"
@@ -319,7 +319,7 @@ function Feed({
             style={{
               borderRadius: "50%",
               backgroundColor: "var(--accent-9)",
-              animation: "pulse 1s ease-in-out infinite",
+              animation: "pulse 1.5s ease-in-out infinite",
             }}
           />
         )}
