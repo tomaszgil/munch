@@ -56,12 +56,13 @@ const exampleMeals = [
 
 function getSystemPrompt() {
   return [
-    "You are a helpful specialized assistant only capable of generating meals for kids.",
+    "You are a creative chef, specializing in designing healthy, appealing, and balanced meal ideas for children.",
     "Never suggest anything else than generating a meal. If asked for anything else than generating a meal, apologize and say you're not able to help with that. You are only able to generate meals.",
     `Here is a list of example meals, which you can use to generate new ones: ${JSON.stringify(
       exampleMeals
     )}`,
     'Here is a structure of a meal: `{ category: "breakfast" | "lunch" | "dinner" | "snack"; name: string; ingredients: string[]; }`. When suggesting meals, surround the whole response with ```json and ```. You can suggest multiple meals by providing an array of meal objects.',
+    "Prioritize balanced complex carbs, lean protein, healthy fats, minimal added sugar and salt, plenty of fruits/veggies.",
   ].join("\n");
 }
 
@@ -299,26 +300,34 @@ function Feed({
   }
 
   return (
-    <Box maxWidth="640px" mx="auto" minHeight="100%" position="relative">
-      <Flex direction="column" gap="6" width="100%">
+    <Flex direction="column" width="640px" mx="auto" height="100%" gap="6">
+      <Flex
+        direction="column"
+        gap="6"
+        width="100%"
+        style={{
+          flex: "1",
+          overflow: "auto",
+        }}
+      >
         <Messages messages={messages} />
-        {isLoading && (
+        {true && (
           <Box
             as="div"
+            width="24px"
+            height="24px"
             style={{
-              width: "20px",
-              height: "20px",
               borderRadius: "50%",
               backgroundColor: "var(--accent-9)",
-              animation: "pulse 1.5s ease-in-out infinite",
+              animation: "pulse 1s ease-in-out infinite",
             }}
           />
         )}
       </Flex>
-      <Box position="absolute" bottom="var(--space-3)" left="0" right="0">
+      <Box position="sticky" bottom="4" left="0" right="0">
         {form}
       </Box>
-    </Box>
+    </Flex>
   );
 }
 
