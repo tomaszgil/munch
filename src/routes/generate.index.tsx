@@ -103,13 +103,17 @@ function PromptForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(prompt);
+    if (!isLoading) {
+      onSubmit(prompt);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      onSubmit(prompt);
+      if (!isLoading) {
+        onSubmit(prompt);
+      }
     }
   };
 
@@ -125,6 +129,7 @@ function PromptForm({
         role="textbox"
         aria-label="Meal prompt"
         aria-multiline="true"
+        aria-disabled={isLoading}
         tabIndex={0}
         onInput={(e) => setPrompt(e.currentTarget.textContent || "")}
         onKeyDown={handleKeyDown}
