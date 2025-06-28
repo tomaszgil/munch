@@ -3,6 +3,7 @@ import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsD
 import { parseMealCreate } from "@/services/meals/parse";
 import type { MealCreate } from "@/services/meals/types";
 import { useMealCreate } from "@/services/meals/useMealCreate";
+import { classNames } from "@/utils/classNames";
 import { useLazyAsync } from "@/utils/useLazyAsync";
 import {
   EyeOpenIcon,
@@ -100,21 +101,35 @@ function PromptForm({
   onAbort: () => void;
 }) {
   const [prompt, setPrompt] = useState("");
+  const inputRef = useRef<HTMLDivElement>(null);
+
+  const clearContent = () => {
+    setPrompt("");
+    if (inputRef.current) {
+      inputRef.current.textContent = "";
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isLoading) {
+    if (prompt && !isLoading) {
       onSubmit(prompt);
+      clearContent();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!isLoading) {
+      if (prompt && !isLoading) {
         onSubmit(prompt);
+        clearContent();
       }
     }
+  };
+
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    setPrompt(e.currentTarget.textContent || "");
   };
 
   return (
@@ -123,6 +138,8 @@ function PromptForm({
       style={{ position: "relative", width: "100%" }}
     >
       <Box
+        ref={inputRef}
+        className={classNames("prompt-input", !prompt && "empty")}
         as="div"
         contentEditable
         suppressContentEditableWarning
@@ -131,7 +148,7 @@ function PromptForm({
         aria-multiline="true"
         aria-disabled={isLoading}
         tabIndex={0}
-        onInput={(e) => setPrompt(e.currentTarget.textContent || "")}
+        onInput={handleInput}
         onKeyDown={handleKeyDown}
         style={{
           width: "100%",
@@ -140,8 +157,6 @@ function PromptForm({
           padding: "var(--space-4)",
           paddingBottom: "64px",
           boxShadow: "var(--shadow-3)",
-          outline: "none",
-          border: "1px solid transparent",
           backgroundColor: "var(--color-panel-solid)",
           color: "var(--color-foreground)",
           fontSize: "var(--font-size-3)",

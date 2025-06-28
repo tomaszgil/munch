@@ -95,6 +95,18 @@ body {
   background: var(--color-panel-solid);
 }
 
+/* Prompt Input */
+.prompt-input:focus-visible {
+  outline: 2px solid var(--focus-8);
+}
+
+.prompt-input.empty::before {
+  content: attr(data-placeholder);
+  color: var(--gray-9);
+  position: absolute;
+  pointer-events: none; /* Allows clicks to pass through to the editable div */
+}
+
 /* Animation */
 @keyframes slideUp {
   0% {
