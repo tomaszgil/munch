@@ -64,6 +64,14 @@ function Generate() {
           }}
           onAbort={() => {
             promptAbortController.current.abort();
+            promptAbortController.current = new AbortController();
+            setMessages((messages) => {
+              const newMessages = [...messages];
+              if (newMessages.length > 0) {
+                newMessages[newMessages.length - 1].cancelled = true;
+              }
+              return newMessages;
+            });
           }}
         />
       }

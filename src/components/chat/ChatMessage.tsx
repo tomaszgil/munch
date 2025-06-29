@@ -16,7 +16,13 @@ import {
   PlusIcon,
 } from "@radix-ui/react-icons";
 
-function UserMessage({ content }: { content: string }) {
+function UserMessage({
+  content,
+  cancelled,
+}: {
+  content: string;
+  cancelled?: boolean;
+}) {
   return (
     <Flex justify="end">
       <Box maxWidth="70%">
@@ -24,10 +30,10 @@ function UserMessage({ content }: { content: string }) {
           p="4"
           style={{
             borderRadius: "var(--radius-5)",
-            backgroundColor: "var(--accent-3)",
+            backgroundColor: cancelled ? "var(--gray-3)" : "var(--accent-3)",
           }}
         >
-          {content}
+          <Text color={cancelled ? "gray" : undefined}>{content}</Text>
         </Box>
       </Box>
     </Flex>
@@ -120,11 +126,14 @@ function AssistantMessage({ content }: { content: string }) {
 export type Message = {
   role: "user" | "assistant";
   content: string;
+  cancelled?: boolean;
 };
 
 export function ChatMessage({ message }: { message: Message }) {
   if (message.role === "user") {
-    return <UserMessage content={message.content} />;
+    return (
+      <UserMessage content={message.content} cancelled={message.cancelled} />
+    );
   }
 
   return <AssistantMessage content={message.content} />;
