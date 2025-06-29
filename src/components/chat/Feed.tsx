@@ -34,7 +34,7 @@ export function Feed({
   if (messages.length === 0) {
     return (
       <Flex
-        width="640px"
+        maxWidth="640px"
         mx="auto"
         minHeight="100%"
         direction="column"
@@ -52,7 +52,7 @@ export function Feed({
   }
 
   return (
-    <Flex direction="column" width="640px" mx="auto" height="100%" gap="6">
+    <Flex direction="column" maxWidth="640px" mx="auto" height="100%" gap="6">
       <Flex
         direction="column"
         gap="6"
