@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Callout, Box, Button, Flex, Text } from "@radix-ui/themes";
-
-import { parseMealCreate } from "@/services/meals/parse";
-import type { MealCreate } from "@/services/meals/types";
-import { useMealCreate } from "@/services/meals/useMealCreate";
-
-import { MealSuggestionCard } from "@/components/MealCard";
-import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
-
-import { useAsync } from "@/utils/useAsync";
+import { Callout, Box, Button, Flex, Text, Badge } from "@radix-ui/themes";
 import {
   ExclamationTriangleIcon,
   EyeOpenIcon,
+  CheckIcon,
   PlusIcon,
 } from "@radix-ui/react-icons";
+
+import { parseMealCreate } from "@/services/meals/parse";
+import type { Meal, MealCreate } from "@/services/meals/types";
+import { useMealCreate } from "@/services/meals/useMealCreate";
+
+import { MealCard, MealSuggestionCard } from "@/components/MealCard";
+import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
+
+import { useAsync } from "@/utils/useAsync";
 
 function UserMessage({
   content,
@@ -41,30 +42,45 @@ function UserMessage({
 }
 
 function MealSuggestion({ meal }: { meal: MealCreate }) {
+  const [mealAdded, setMealAdded] = useState<Meal | null>(null);
   const createMeal = useMealCreate();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
   const onAddToMenu = () => {
-    createMeal(meal);
+    setMealAdded(createMeal(meal));
     toast.success(`You have added ${meal.name} to the menu.`);
   };
 
   return (
     <Box>
-      <MealSuggestionCard meal={meal} />
-      <Flex justify="end" gap="2" mt="3">
-        <Button
-          variant="soft"
-          color="gray"
-          onClick={() => setIsDetailsDialogOpen(true)}
-        >
-          <EyeOpenIcon />
-          See details
-        </Button>
-        <Button variant="soft" color="gray" onClick={onAddToMenu}>
-          <PlusIcon />
-          Add to menu
-        </Button>
+      {mealAdded ? (
+        <MealCard meal={mealAdded} />
+      ) : (
+        <MealSuggestionCard meal={meal} />
+      )}
+
+      <Flex justify="end" align="center" gap="2" mt="3" minHeight="32px">
+        {mealAdded ? (
+          <Badge color="green">
+            <CheckIcon />
+            Meal added to menu
+          </Badge>
+        ) : (
+          <>
+            <Button
+              variant="soft"
+              color="gray"
+              onClick={() => setIsDetailsDialogOpen(true)}
+            >
+              <EyeOpenIcon />
+              See details
+            </Button>
+            <Button variant="soft" color="gray" onClick={onAddToMenu}>
+              <PlusIcon />
+              Add to menu
+            </Button>
+          </>
+        )}
       </Flex>
 
       <MealSuggestionDetailsDialog
