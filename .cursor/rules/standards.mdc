@@ -8,6 +8,12 @@ This rule provides standards for frontend components, ensuring consistent stylin
 When working in with React components:
 
 - Always use `@radix-ui` components for low-level visual components
+- Order imports based on the following:
+    1. External libraries (`react`, `@tanstack/react-router`, `sonner`, etc.)
+    2. Assets (`@/assets`)
+    3. Services (`@/services`)
+    4. Components (`@/components`)
+    5. Utils (`@/utils`)
 
 When working with routing:
 
