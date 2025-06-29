@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 type AsyncStatus = "idle" | "loading" | "success" | "error";
 
@@ -72,4 +72,18 @@ export function useLazyAsync<T, Args extends any[]>(
       isIdle: state.status === "idle",
     },
   ];
+}
+
+export function useAsync<T, Args extends any[]>(
+  asyncFn: (...args: Args) => Promise<T>,
+  args: Args,
+  dependencies: any[] = []
+): AsyncState<T> {
+  const [execute, state] = useLazyAsync(asyncFn);
+
+  useEffect(() => {
+    execute(...args);
+  }, [execute, ...args, ...dependencies]);
+
+  return state;
 }

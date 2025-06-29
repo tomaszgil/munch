@@ -4,14 +4,23 @@ import { parseMealCreate } from "@/services/meals/parse";
 import type { MealCreate } from "@/services/meals/types";
 import { useMealCreate } from "@/services/meals/useMealCreate";
 import { classNames } from "@/utils/classNames";
-import { useLazyAsync } from "@/utils/useLazyAsync";
+import { useAsync, useLazyAsync } from "@/utils/useAsync";
 import {
+  ExclamationTriangleIcon,
   EyeOpenIcon,
   MagicWandIcon,
   PlusIcon,
   StopIcon,
 } from "@radix-ui/react-icons";
-import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
+import {
+  Callout,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+} from "@radix-ui/themes";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { useCallback, useRef, useState, useLayoutEffect } from "react";
 import { toast } from "sonner";
@@ -240,36 +249,49 @@ function MealSuggestion({ meal }: { meal: MealCreate }) {
   );
 }
 
-function AssistantMessage({ content }: { content: string }) {
-  const mealsData = (() => {
-    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
-    if (jsonMatch) {
-      try {
-        const json = JSON.parse(jsonMatch[1]);
-        const meals = Array.isArray(json) ? json : [json];
-        return meals.map(parseMealCreate);
-      } catch (e) {
-        // add error handling
-        return null;
-      }
+function parseMealsFromContent(content: string) {
+  const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+  if (jsonMatch) {
+    try {
+      const json = JSON.parse(jsonMatch[1]);
+      const meals = Array.isArray(json) ? json : [json];
+      return Promise.resolve(meals.map(parseMealCreate));
+    } catch (e) {
+      return Promise.reject(e);
     }
-    return null;
-  })();
+  }
+  return Promise.resolve(null);
+}
 
-  if (mealsData) {
+function AssistantMessage({ content }: { content: string }) {
+  const { isError, data } = useAsync(parseMealsFromContent, [content]);
+
+  if (isError) {
+    return (
+      <Callout.Root color="red">
+        <Callout.Icon>
+          <ExclamationTriangleIcon />
+        </Callout.Icon>
+        <Callout.Text>Failed to generate meal. Please try again.</Callout.Text>
+      </Callout.Root>
+    );
+  }
+
+  if (data) {
     return (
       <Box>
         <Text as="p" mb="3">
           Here are some meal suggestions for you:
         </Text>
         <Flex direction="column" gap="3">
-          {mealsData.map((meal, index) => (
+          {data.map((meal, index) => (
             <MealSuggestion key={index} meal={meal} />
           ))}
         </Flex>
       </Box>
     );
   }
+
   return <Box>{content}</Box>;
 }
 
