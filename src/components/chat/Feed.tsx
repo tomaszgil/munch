@@ -1,5 +1,6 @@
 import { useLayoutEffect } from "react";
 import { Box, Flex, Heading } from "@radix-ui/themes";
+
 import type { Message } from "./ChatMessage";
 import { ChatMessage } from "./ChatMessage";
 

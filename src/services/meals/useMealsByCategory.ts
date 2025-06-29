@@ -1,4 +1,5 @@
 import type { MealCategory } from "./types";
+
 import { useMealsQuery } from "./useMealsQuery";
 
 export const useMealsByCategory = () => {

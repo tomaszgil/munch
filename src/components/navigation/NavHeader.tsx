@@ -1,7 +1,9 @@
 import { Box, Flex, IconButton, Link, Text } from "@radix-ui/themes";
 import * as Popover from "@radix-ui/react-popover";
 import { HamburgerMenuIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+
 import logo from "../../assets/logo.png";
+
 import { NavLinkItem } from "./NavListItem";
 import { navConfig } from "./config";
 import { useBrandBackground } from "./useBrandBackground";

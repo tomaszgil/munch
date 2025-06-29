@@ -1,35 +1,37 @@
 import { useCallback } from "react";
 import { z } from "zod/v4";
 import debounce from "lodash/debounce";
-import { CreateMealDialog } from "@/components/CreateMealDialog";
-import { DeleteMealDialog } from "@/components/DeleteMealDialog";
-import { UpdateMealDialog } from "@/components/UpdateMealDialog";
-import {
-  MagnifyingGlassIcon,
-  PlusIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   Box,
   Button,
+  Card,
   Flex,
   Heading,
-  TextField,
   Text,
-  Card,
+  TextField,
   Select,
   Separator,
   DropdownMenu,
   IconButton,
 } from "@radix-ui/themes";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { toast } from "sonner";
+import {
+  PlusIcon,
+  MagnifyingGlassIcon,
+  DotsHorizontalIcon,
+} from "@radix-ui/react-icons";
+
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealCreate } from "@/services/meals/useMealCreate";
 import { useMealDelete } from "@/services/meals/useMealDelete";
 import { useMealUpdate } from "@/services/meals/useMealUpdate";
 import type { Meal, MealCategory } from "@/services/meals/types";
+
+import { CreateMealDialog } from "@/components/CreateMealDialog";
+import { DeleteMealDialog } from "@/components/DeleteMealDialog";
+import { UpdateMealDialog } from "@/components/UpdateMealDialog";
 import { MealCard } from "@/components/MealCard";
 
 const SearchSchema = z.object({

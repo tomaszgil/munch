@@ -1,7 +1,9 @@
-import { Box, Flex, Text, Link } from "@radix-ui/themes";
 import { useState } from "react";
+import { Box, Flex, Text, Link } from "@radix-ui/themes";
 import { MoonIcon, SunIcon, ViewVerticalIcon } from "@radix-ui/react-icons";
+
 import logo from "../../assets/logo.png";
+
 import { NavLinkItem } from "./NavListItem";
 import { navConfig } from "./config";
 import { useBrandBackground } from "./useBrandBackground";

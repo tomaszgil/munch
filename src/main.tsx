@@ -1,12 +1,12 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-
-// Import the generated route tree
-import { routeTree } from "./routeTree.gen.ts";
 import "@radix-ui/themes/styles.css";
 import "@fontsource/geist-sans/400.css";
 import "@fontsource/geist-sans/600.css";
+
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen.ts";
 import "./styles.css";
 
 import reportWebVitals from "./reportWebVitals.ts";

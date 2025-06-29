@@ -1,5 +1,6 @@
-import type { MealCategory } from "@/services/meals/types";
 import { Badge } from "@radix-ui/themes";
+
+import type { MealCategory } from "@/services/meals/types";
 
 const getCategoryColor = (category: MealCategory) => {
   switch (category) {

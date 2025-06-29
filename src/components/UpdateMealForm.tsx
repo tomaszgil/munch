@@ -1,16 +1,17 @@
 import { useState, useRef, useCallback } from "react";
-import { MealCategorySchema, type MealCategory } from "@/services/meals/types";
 import { PlusIcon, Cross2Icon, InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   Button,
   Flex,
-  TextField,
   Text,
+  TextField,
   Select,
   IconButton,
   Callout,
 } from "@radix-ui/themes";
 import { z } from "zod/v4";
+
+import { MealCategorySchema, type MealCategory } from "@/services/meals/types";
 
 const mealFormSchema = z.object({
   name: z.string().min(1, "Meal name is required."),

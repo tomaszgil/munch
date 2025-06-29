@@ -1,4 +1,5 @@
 import { useCallback, useSyncExternalStore } from "react";
+
 import { store } from "./store";
 import type { Meal } from "./types";
 

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+
 import { store } from "./store";
 import type { Meal, MealCategory } from "./types";
 

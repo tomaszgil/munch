@@ -1,5 +1,7 @@
-import type { MealCategory, MealCreate } from "@/services/meals/types";
 import { Button, Dialog } from "@radix-ui/themes";
+
+import type { MealCategory, MealCreate } from "@/services/meals/types";
+
 import { UpdateMealForm } from "./UpdateMealForm";
 
 interface CreateMealDialogProps {

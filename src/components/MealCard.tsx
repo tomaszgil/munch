@@ -1,7 +1,9 @@
 import { Badge, Card, Flex, Text } from "@radix-ui/themes";
 import { Link } from "@tanstack/react-router";
-import { CategoryBadge } from "@/components/CategoryBadge";
+
 import type { Meal, MealCategory, MealCreate } from "@/services/meals/types";
+
+import { CategoryBadge } from "@/components/CategoryBadge";
 
 interface BaseMealCardProps {
   name: React.ReactNode;

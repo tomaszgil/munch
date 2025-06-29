@@ -1,6 +1,8 @@
 import { DataList } from "@radix-ui/themes";
-import { CategoryBadge } from "./CategoryBadge";
+
 import type { MealCreate } from "@/services/meals/types";
+
+import { CategoryBadge } from "./CategoryBadge";
 
 interface MealDetailsProps {
   meal: MealCreate;

@@ -1,5 +1,5 @@
-import { Theme } from "@radix-ui/themes";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { Theme } from "@radix-ui/themes";
 
 type Theme = "dark" | "light";
 

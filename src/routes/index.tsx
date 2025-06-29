@@ -1,3 +1,4 @@
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   Box,
   Card,
@@ -10,13 +11,14 @@ import {
   DropdownMenu,
 } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
+import { useMealsByCategory } from "@/services/meals/useMealsByCategory";
+import type { MealCategory, Meal } from "@/services/meals/types";
+
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { MealCard } from "@/components/MealCard";
-import type { MealCategory, Meal } from "@/services/meals/types";
-import { useState, useCallback, useEffect, useRef } from "react";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { useMealsByCategory } from "@/services/meals/useMealsByCategory";
 import { useBrandBackground } from "@/components/navigation/useBrandBackground";
 
 const orderedCategories = [

@@ -1,5 +1,7 @@
 import { Button, Dialog, Flex } from "@radix-ui/themes";
+
 import type { MealCreate } from "@/services/meals/types";
+
 import { MealDetails } from "./MealDetails";
 
 interface MealSuggestionDetailsDialogProps {

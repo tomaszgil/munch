@@ -1,6 +1,8 @@
 import { useRef } from "react";
-import type { Meal, MealCategory, MealUpdate } from "@/services/meals/types";
 import { Button, Dialog } from "@radix-ui/themes";
+
+import type { Meal, MealCategory, MealUpdate } from "@/services/meals/types";
+
 import { UpdateMealForm } from "./UpdateMealForm";
 
 interface UpdateMealDialogProps {

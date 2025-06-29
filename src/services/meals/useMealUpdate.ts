@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+
 import { store } from "./store";
 import type { MealUpdate } from "./types";
 

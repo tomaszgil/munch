@@ -16,10 +16,12 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
+import { ChevronLeftIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+
 import { useMealQuery } from "@/services/meals/useMealQuery";
 import { useMealDelete } from "@/services/meals/useMealDelete";
 import { useMealUpdate } from "@/services/meals/useMealUpdate";
-import { ChevronLeftIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+
 import { MealDetails } from "@/components/MealDetails";
 import { UpdateMealDialog } from "@/components/UpdateMealDialog";
 import { DeleteMealDialog } from "@/components/DeleteMealDialog";

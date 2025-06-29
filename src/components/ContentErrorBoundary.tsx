@@ -1,8 +1,9 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { z } from "zod/v4";
 import { Box, Button, Callout, Heading, Text } from "@radix-ui/themes";
-import { useMealsReset } from "../services/meals/useMealsReset";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
+
+import { useMealsReset } from "@/services/meals/useMealsReset";
 
 interface ErrorFallbackProps {
   error: Error;

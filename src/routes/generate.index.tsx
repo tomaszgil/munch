@@ -1,6 +1,8 @@
-import { useLazyAsync } from "@/utils/useAsync";
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
+import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+
+import { useLazyAsync } from "@/utils/useAsync";
+
 import type { Message } from "@/components/chat/ChatMessage";
 import { Feed } from "@/components/chat/Feed";
 import { PromptForm } from "@/components/chat/PromptForm";

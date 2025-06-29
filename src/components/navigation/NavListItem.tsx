@@ -1,8 +1,8 @@
+import { forwardRef } from "react";
+import type { ReactNode } from "react";
 import { Tooltip } from "@radix-ui/themes";
 import { Link } from "@tanstack/react-router";
 import { Text } from "@radix-ui/themes";
-import { forwardRef } from "react";
-import type { ReactNode } from "react";
 
 interface NavLinkItemProps {
   to: string;

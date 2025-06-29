@@ -1,17 +1,20 @@
-import { MealSuggestionCard } from "@/components/MealCard";
-import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Callout, Box, Button, Flex, Text } from "@radix-ui/themes";
+
 import { parseMealCreate } from "@/services/meals/parse";
 import type { MealCreate } from "@/services/meals/types";
 import { useMealCreate } from "@/services/meals/useMealCreate";
+
+import { MealSuggestionCard } from "@/components/MealCard";
+import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
+
 import { useAsync } from "@/utils/useAsync";
 import {
   ExclamationTriangleIcon,
   EyeOpenIcon,
   PlusIcon,
 } from "@radix-ui/react-icons";
-import { Callout, Box, Button, Flex, Text } from "@radix-ui/themes";
-import { useState } from "react";
-import { toast } from "sonner";
 
 function UserMessage({ content }: { content: string }) {
   return (

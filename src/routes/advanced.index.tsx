@@ -2,10 +2,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Box, Card, Flex, Heading, Text, Button } from "@radix-ui/themes";
 import { createFileRoute } from "@tanstack/react-router";
+
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
 import { useMealsReset } from "@/services/meals/useMealsReset";
 import { store } from "@/services/meals/store";
 import { parseMeal } from "@/services/meals/parse";
+
 import { DeleteAllMealsDialog } from "@/components/DeleteAllMealsDialog";
 
 export const Route = createFileRoute("/advanced/")({

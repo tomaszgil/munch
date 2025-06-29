@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
-import { classNames } from "@/utils/classNames";
 import { StopIcon, MagicWandIcon } from "@radix-ui/react-icons";
+
+import { classNames } from "@/utils/classNames";
 
 export function PromptForm({
   onSubmit,
