@@ -45,6 +45,12 @@ export function PromptForm({
     setPrompt(e.currentTarget.textContent || "");
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    document.execCommand("insertText", false, text);
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -63,6 +69,7 @@ export function PromptForm({
         tabIndex={0}
         onInput={handleInput}
         onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
         style={{
           width: "100%",
           minHeight: "120px",
