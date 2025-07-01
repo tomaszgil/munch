@@ -1,14 +1,17 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { Box, Callout, Code, Heading, Text } from "@radix-ui/themes";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 
 import { useLazyAsync } from "@/utils/useAsync";
 
-import { getSession } from "@/services/chat/session";
-import type { Message } from "@/components/chat/ChatMessage";
+import { createSession, getSession } from "@/services/chat/session";
 import { Feed } from "@/components/chat/Feed";
 import { PromptForm } from "@/components/chat/PromptForm";
+import { useMessages } from "@/services/chat/useMessages";
+import { useMessageCreate } from "@/services/chat/useMessageCreate";
+import { useMessagesReset } from "@/services/chat/useMessagesReset";
+import { useMessageUpdate } from "@/services/chat/useMessageUpdate";
 
 export const Route = createFileRoute("/generate/")({
   component: Generate,
@@ -26,20 +29,22 @@ async function generateMeal(prompt: string, options: { signal: AbortSignal }) {
   return result;
 }
 
+createSession();
+
 function Generate() {
   const { available } = useLoaderData({ from: Route.id });
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const messages = useMessages();
+  const createMessage = useMessageCreate();
+  const updateMessage = useMessageUpdate();
+  const resetMessages = useMessagesReset();
 
   const promptAbortController = useRef<AbortController>(new AbortController());
   const promptExecuteFn = useCallback(async (prompt: string) => {
     const result = await generateMeal(prompt, {
       signal: promptAbortController.current.signal,
     });
-    setMessages((messages) => [
-      ...messages,
-      { role: "assistant", content: result || "" },
-    ]);
+    createMessage({ role: "assistant", content: result || "" });
   }, []);
 
   const [promptExecute, promptState] = useLazyAsync(promptExecuteFn);
@@ -83,23 +88,18 @@ function Generate() {
         <PromptForm
           isLoading={promptState.isLoading}
           onSubmit={(prompt) => {
-            setMessages((messages) => [
-              ...messages,
-              { role: "user", content: prompt },
-            ]);
-
+            const message = createMessage({ role: "user", content: prompt });
             promptExecute(prompt);
+            return message.id;
           }}
-          onAbort={() => {
+          onAbort={(id: string) => {
             promptAbortController.current.abort();
             promptAbortController.current = new AbortController();
-            setMessages((messages) => {
-              const newMessages = [...messages];
-              if (newMessages.length > 0) {
-                newMessages[newMessages.length - 1].cancelled = true;
-              }
-              return newMessages;
-            });
+            updateMessage(id, { cancelled: true });
+          }}
+          onClearSession={() => {
+            createSession();
+            resetMessages();
           }}
         />
       }

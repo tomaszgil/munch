@@ -1,20 +1,27 @@
 import { useRef, useState } from "react";
-import { Box, Flex, IconButton } from "@radix-ui/themes";
-import { StopIcon, MagicWandIcon } from "@radix-ui/react-icons";
+import { Box, Button, Flex, IconButton } from "@radix-ui/themes";
+import {
+  StopIcon,
+  MagicWandIcon,
+  CrossCircledIcon,
+} from "@radix-ui/react-icons";
 
 import { classNames } from "@/utils/classNames";
 
 export function PromptForm({
-  onSubmit,
   isLoading,
+  onSubmit,
   onAbort,
+  onClearSession,
 }: {
-  onSubmit: (prompt: string) => void;
   isLoading: boolean;
-  onAbort: () => void;
+  onSubmit: (prompt: string) => string;
+  onAbort: (id: string) => void;
+  onClearSession: () => void;
 }) {
   const [prompt, setPrompt] = useState("");
   const inputRef = useRef<HTMLDivElement>(null);
+  const pendingId = useRef<string | null>(null);
 
   const clearContent = () => {
     setPrompt("");
@@ -26,7 +33,7 @@ export function PromptForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (prompt && !isLoading) {
-      onSubmit(prompt);
+      pendingId.current = onSubmit(prompt);
       clearContent();
     }
   };
@@ -35,7 +42,7 @@ export function PromptForm({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (prompt && !isLoading) {
-        onSubmit(prompt);
+        pendingId.current = onSubmit(prompt);
         clearContent();
       }
     }
@@ -84,9 +91,32 @@ export function PromptForm({
         }}
         data-placeholder="Generate meals for a lunch with tomato, chicken, and rice..."
       />
-      <Flex position="absolute" bottom="0" right="0" p="4" gap="2">
+      <Flex
+        position="absolute"
+        bottom="0"
+        left="0"
+        right="0"
+        p="4"
+        gap="2"
+        justify="between"
+        align="center"
+      >
+        <Button
+          type="button"
+          onClick={onClearSession}
+          variant="ghost"
+          color="gray"
+        >
+          <CrossCircledIcon />
+          Clear session
+        </Button>
         {isLoading && (
-          <IconButton size="3" type="button" onClick={onAbort} variant="soft">
+          <IconButton
+            size="3"
+            type="button"
+            onClick={() => onAbort(pendingId.current || "")}
+            variant="soft"
+          >
             <StopIcon />
           </IconButton>
         )}

@@ -43,18 +43,19 @@ function getSystemPrompt() {
 
 let session: any = null;
 
-export async function getSession() {
-  if (!session) {
-    // @ts-expect-error
-    session = await LanguageModel.create({
-      initialPrompts: [
-        {
-          role: "system",
-          content: getSystemPrompt(),
-        },
-      ],
-    });
-  }
+export async function createSession(
+  initialPrompts: Array<{ role: "user" | "assistant"; content: string }> = []
+) {
+  // @ts-expect-error
+  session = await LanguageModel.create({
+    initialPrompts: [
+      { role: "system", content: getSystemPrompt() },
+      ...initialPrompts,
+    ],
+  });
+  return session;
+}
 
+export async function getSession() {
   return session;
 }
