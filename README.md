@@ -21,6 +21,7 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 - **Random Meal Selection** 🎲: Get random meal suggestions with animated selection
 - **Search & Filter** 🔍: Find meals by name or filter by category
 - **Recent Meals** ⏰: Quick access to your recently updated meals
+- **AI-Powered Chat Interface** 💬: Interactive chat with AI to generate meals based on ingredients, dietary preferences, or meal types
 
 ### Advanced Features
 
@@ -45,6 +46,11 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 - **TypeScript** - Type-safe development
 - **Vite** - Fast build tool and development server
 
+### AI Integration
+
+- **Gemini Nano** - Built-in Chrome AI model for meal generation
+- **Language Model API** - Chrome's Prompt API for AI integration
+
 ### Routing & State Management
 
 - **TanStack Router** - Type-safe routing with file-based routing
@@ -52,6 +58,7 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 
 ### UI & Styling
 
+- **Netlify-Inspired Design** - Clean, modern aesthetic with subtle gradients and smooth animations
 - **Radix UI** - Accessible, unstyled UI components
 - **Radix Themes** - Design system and theming
 - **CSS Variables** - Dynamic theming support
@@ -66,6 +73,7 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 
 - Node.js (v18 or higher)
 - pnpm (recommended) or npm
+- Chrome browser (for AI meal generation feature)
 
 ### Getting Started
 
@@ -83,6 +91,21 @@ Munch is a meal-tracking application designed to solve the everyday problem of "
 
 3. **Open your browser**
    Navigate to `http://localhost:3000`
+
+### AI Meal Generation Setup
+
+To use the AI meal generation feature:
+
+1. **Enable Chrome AI Features**:
+
+   - Navigate to `chrome://flags` in your Chrome browser
+   - Enable the "Prompt API for Gemini Nano" flag
+   - Restart Chrome
+
+2. **Generate Meals**:
+   - Go to the "Generate" page in the app
+   - Type natural language prompts like "Generate meals for a lunch with tomato, chicken, and rice"
+   - The AI will suggest balanced, kid-friendly meal ideas
 
 ### Available Scripts
 

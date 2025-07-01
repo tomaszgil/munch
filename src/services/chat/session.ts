@@ -1,4 +1,6 @@
-const exampleMeals = [
+import type { MealCreate } from "../meals/types";
+
+const exampleMeals: Array<MealCreate> = [
   {
     name: "Mini Pancakes with Berries",
     category: "breakfast",
