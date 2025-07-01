@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { Box, Callout, Code, Heading, Text } from "@radix-ui/themes";
+import { CrossCircledIcon } from "@radix-ui/react-icons";
 
 import { useLazyAsync } from "@/utils/useAsync";
 
@@ -43,8 +45,34 @@ function Generate() {
   const [promptExecute, promptState] = useLazyAsync(promptExecuteFn);
 
   if (available === "unavailable") {
-    // TODO: render a nice error message
-    return <div>Language model is not available</div>;
+    return (
+      <Box maxWidth="960px" mx="auto">
+        <Callout.Root size="3" color="red">
+          <Callout.Icon>
+            <CrossCircledIcon />
+          </Callout.Icon>
+          <Callout.Text>
+            <Heading as="h2" size="3" mb="2">
+              Language model is not available
+            </Heading>
+            <Text>
+              This feature currently works with the built-in Gemini Nano model
+              only in Chrome. To enable it:
+            </Text>
+            <Text as="div" mt="2">
+              <ol style={{ margin: 0, paddingLeft: "1.5rem" }}>
+                <li>Ensure you are using Chrome as your browser</li>
+                <li>
+                  Go to <Code>chrome://flags</Code> in your address bar
+                </li>
+                <li>Enable the "Prompt API for Gemini Nano" flag</li>
+                <li>Restart Chrome</li>
+              </ol>
+            </Text>
+          </Callout.Text>
+        </Callout.Root>
+      </Box>
+    );
   }
 
   return (
