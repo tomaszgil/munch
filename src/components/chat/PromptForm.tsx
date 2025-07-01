@@ -15,13 +15,12 @@ export function PromptForm({
   onClearSession,
 }: {
   isLoading: boolean;
-  onSubmit: (prompt: string) => string;
-  onAbort: (id: string) => void;
+  onSubmit: (prompt: string) => void;
+  onAbort: () => void;
   onClearSession: () => void;
 }) {
   const [prompt, setPrompt] = useState("");
   const inputRef = useRef<HTMLDivElement>(null);
-  const pendingId = useRef<string | null>(null);
 
   const clearContent = () => {
     setPrompt("");
@@ -33,7 +32,7 @@ export function PromptForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (prompt && !isLoading) {
-      pendingId.current = onSubmit(prompt);
+      onSubmit(prompt);
       clearContent();
     }
   };
@@ -42,7 +41,7 @@ export function PromptForm({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (prompt && !isLoading) {
-        pendingId.current = onSubmit(prompt);
+        onSubmit(prompt);
         clearContent();
       }
     }
@@ -111,12 +110,7 @@ export function PromptForm({
           Clear session
         </Button>
         {isLoading && (
-          <IconButton
-            size="3"
-            type="button"
-            onClick={() => onAbort(pendingId.current || "")}
-            variant="soft"
-          >
+          <IconButton size="3" type="button" onClick={onAbort} variant="soft">
             <StopIcon />
           </IconButton>
         )}

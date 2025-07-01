@@ -12,6 +12,7 @@ import { useMessages } from "@/services/chat/useMessages";
 import { useMessageCreate } from "@/services/chat/useMessageCreate";
 import { useMessagesReset } from "@/services/chat/useMessagesReset";
 import { useMessageUpdate } from "@/services/chat/useMessageUpdate";
+import type { Message } from "@/services/chat/types";
 
 export const Route = createFileRoute("/generate/")({
   component: Generate,
@@ -35,6 +36,7 @@ function Generate() {
   const { available } = useLoaderData({ from: Route.id });
 
   const messages = useMessages();
+  const pendingMessage = useRef<Message | null>(null);
   const createMessage = useMessageCreate();
   const updateMessage = useMessageUpdate();
   const resetMessages = useMessagesReset();
@@ -88,14 +90,20 @@ function Generate() {
         <PromptForm
           isLoading={promptState.isLoading}
           onSubmit={(prompt) => {
-            const message = createMessage({ role: "user", content: prompt });
+            pendingMessage.current = createMessage({
+              role: "user",
+              content: prompt,
+            });
             promptExecute(prompt);
-            return message.id;
           }}
-          onAbort={(id: string) => {
+          onAbort={() => {
             promptAbortController.current.abort();
             promptAbortController.current = new AbortController();
-            updateMessage(id, { cancelled: true });
+
+            if (pendingMessage.current) {
+              updateMessage(pendingMessage.current.id, { cancelled: true });
+              pendingMessage.current = null;
+            }
           }}
           onClearSession={() => {
             createSession();
