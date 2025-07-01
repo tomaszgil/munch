@@ -20,6 +20,9 @@ export const store = {
     }
     return resultParsed;
   },
+  getById: (id: string) => {
+    return store.get().find((message) => message.id === id);
+  },
   set: (value: Array<Message>) => {
     localStorage.setItem(key, JSON.stringify(value));
     window.dispatchEvent(new Event("storage"));

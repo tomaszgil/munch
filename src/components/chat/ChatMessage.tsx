@@ -9,9 +9,8 @@ import {
 } from "@radix-ui/react-icons";
 
 import { parseMealCreate } from "@/services/meals/parse";
-import type { Meal, MealCreate } from "@/services/meals/types";
+import type { MealCreate } from "@/services/meals/types";
 import { useMealCreate } from "@/services/meals/useMealCreate";
-import { useMessageUpdate } from "@/services/chat/useMessageUpdate";
 
 import { MealCard, MealSuggestionCard } from "@/components/MealCard";
 import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
@@ -19,6 +18,7 @@ import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsD
 import { useAsync } from "@/utils/useAsync";
 import type { Message } from "@/services/chat/types";
 import { useMealQuery } from "@/services/meals/useMealQuery";
+import { useAddMealToMessage } from "@/services/chat/useAddMealToMessage";
 
 function UserMessage({
   content,
@@ -45,24 +45,16 @@ function UserMessage({
 }
 
 function MealSuggestion({
-  messageId,
   meal,
   savedMealId,
+  onAddToMenu,
 }: {
-  messageId: string;
-  meal: Meal | MealCreate;
+  meal: MealCreate;
   savedMealId?: string;
+  onAddToMenu: () => void;
 }) {
   const savedMeal = useMealQuery(savedMealId ?? "");
-  const createMeal = useMealCreate();
-  const updateMessage = useMessageUpdate();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-
-  const onAddToMenu = () => {
-    const newMeal = createMeal(meal);
-    updateMessage(messageId, { mealId: newMeal.id });
-    toast.success(`You have added ${meal.name} to the menu.`);
-  };
 
   return (
     <Box>
@@ -123,13 +115,15 @@ function parseMealsFromContent(content: string) {
 function AssistantMessage({
   id,
   content,
-  savedMealId,
+  meals,
 }: {
   id: string;
   content: string;
-  savedMealId?: string;
+  meals?: Array<{ index: number; id: string }>;
 }) {
   const { isError, data } = useAsync(parseMealsFromContent, [content]);
+  const createMeal = useMealCreate();
+  const addMealToMessage = useAddMealToMessage();
 
   if (isError) {
     return (
@@ -142,6 +136,12 @@ function AssistantMessage({
     );
   }
 
+  const onAddToMenu = (meal: MealCreate, index: number) => {
+    const newMeal = createMeal(meal);
+    addMealToMessage(id, { index, id: newMeal.id });
+    toast.success(`You have added ${meal.name} to the menu.`);
+  };
+
   if (data) {
     return (
       <Box>
@@ -152,9 +152,9 @@ function AssistantMessage({
           {data.map((meal, index) => (
             <MealSuggestion
               key={index}
-              messageId={id}
               meal={meal}
-              savedMealId={savedMealId}
+              onAddToMenu={() => onAddToMenu(meal, index)}
+              savedMealId={meals?.find(({ index: i }) => i === index)?.id}
             />
           ))}
         </Flex>
@@ -175,7 +175,7 @@ export function ChatMessage({ message }: { message: Message }) {
   return (
     <AssistantMessage
       id={message.id}
-      savedMealId={message.mealId}
+      meals={message.meals}
       content={message.content}
     />
   );
