@@ -11,11 +11,14 @@ import {
 import { parseMealCreate } from "@/services/meals/parse";
 import type { Meal, MealCreate } from "@/services/meals/types";
 import { useMealCreate } from "@/services/meals/useMealCreate";
+import { useMessageUpdate } from "@/services/chat/useMessageUpdate";
 
 import { MealCard, MealSuggestionCard } from "@/components/MealCard";
 import { MealSuggestionDetailsDialog } from "@/components/MealSuggestionDetailsDialog";
 
 import { useAsync } from "@/utils/useAsync";
+import type { Message } from "@/services/chat/types";
+import { useMealQuery } from "@/services/meals/useMealQuery";
 
 function UserMessage({
   content,
@@ -41,26 +44,36 @@ function UserMessage({
   );
 }
 
-function MealSuggestion({ meal }: { meal: MealCreate }) {
-  const [mealAdded, setMealAdded] = useState<Meal | null>(null);
+function MealSuggestion({
+  messageId,
+  meal,
+  savedMealId,
+}: {
+  messageId: string;
+  meal: Meal | MealCreate;
+  savedMealId?: string;
+}) {
+  const savedMeal = useMealQuery(savedMealId ?? "");
   const createMeal = useMealCreate();
+  const updateMessage = useMessageUpdate();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
   const onAddToMenu = () => {
-    setMealAdded(createMeal(meal));
+    const newMeal = createMeal(meal);
+    updateMessage(messageId, { mealId: newMeal.id });
     toast.success(`You have added ${meal.name} to the menu.`);
   };
 
   return (
     <Box>
-      {mealAdded ? (
-        <MealCard meal={mealAdded} />
+      {savedMeal ? (
+        <MealCard meal={savedMeal} />
       ) : (
         <MealSuggestionCard meal={meal} />
       )}
 
       <Flex justify="end" align="center" gap="2" mt="3" minHeight="32px">
-        {mealAdded ? (
+        {savedMeal ? (
           <Badge color="green">
             <CheckIcon />
             Meal added to menu
@@ -107,7 +120,15 @@ function parseMealsFromContent(content: string) {
   return Promise.resolve(null);
 }
 
-function AssistantMessage({ content }: { content: string }) {
+function AssistantMessage({
+  id,
+  content,
+  savedMealId,
+}: {
+  id: string;
+  content: string;
+  savedMealId?: string;
+}) {
   const { isError, data } = useAsync(parseMealsFromContent, [content]);
 
   if (isError) {
@@ -129,7 +150,12 @@ function AssistantMessage({ content }: { content: string }) {
         </Text>
         <Flex direction="column" gap="3">
           {data.map((meal, index) => (
-            <MealSuggestion key={index} meal={meal} />
+            <MealSuggestion
+              key={index}
+              messageId={id}
+              meal={meal}
+              savedMealId={savedMealId}
+            />
           ))}
         </Flex>
       </Box>
@@ -139,12 +165,6 @@ function AssistantMessage({ content }: { content: string }) {
   return <Box>{content}</Box>;
 }
 
-export type Message = {
-  role: "user" | "assistant";
-  content: string;
-  cancelled?: boolean;
-};
-
 export function ChatMessage({ message }: { message: Message }) {
   if (message.role === "user") {
     return (
@@ -152,5 +172,11 @@ export function ChatMessage({ message }: { message: Message }) {
     );
   }
 
-  return <AssistantMessage content={message.content} />;
+  return (
+    <AssistantMessage
+      id={message.id}
+      savedMealId={message.mealId}
+      content={message.content}
+    />
+  );
 }

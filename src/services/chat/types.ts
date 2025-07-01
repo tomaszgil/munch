@@ -5,6 +5,7 @@ export const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
   content: z.string(),
   cancelled: z.boolean().optional(),
+  mealId: z.string().optional(),
 });
 
 export type Message = z.infer<typeof MessageSchema>;
