@@ -1,14 +1,18 @@
 import { useSyncExternalStore } from "react";
 
 import { store } from "./store";
-import type { Meal, MealCategory } from "./types";
+import type { Meal, MealCategory, SortKey, SortDirection } from "./types";
 
 export const useMealsQuery = ({
   category,
   search,
+  sortKey = "updatedAt",
+  sortDirection = "desc",
 }: {
   category?: MealCategory;
   search?: string;
+  sortKey?: SortKey;
+  sortDirection?: SortDirection;
 } = {}) => {
   const results = useSyncExternalStore<Meal[]>(store.subscribe, store.get);
 
@@ -28,7 +32,32 @@ export const useMealsQuery = ({
     return matches;
   });
 
-  return filteredResults.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  return filteredResults.sort((a, b) => {
+    let aValue: string | number;
+    let bValue: string | number;
+
+    switch (sortKey) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      case "updatedAt":
+        aValue = new Date(a.updatedAt).getTime();
+        bValue = new Date(b.updatedAt).getTime();
+        break;
+      default:
+        aValue = new Date(a.updatedAt).getTime();
+        bValue = new Date(b.updatedAt).getTime();
+    }
+
+    if (sortDirection === "asc") {
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+    } else {
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+    }
+  });
 };

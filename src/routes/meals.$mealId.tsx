@@ -46,7 +46,12 @@ function RouteComponent() {
   const navigateToMeals = () => {
     navigate({
       to: "/meals",
-      search: { category: "all", search: "" },
+      search: {
+        category: "all",
+        search: "",
+        sortKey: "updatedAt",
+        sortDirection: "desc",
+      },
     });
   };
 

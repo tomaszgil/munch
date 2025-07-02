@@ -21,6 +21,9 @@ import {
   PlusIcon,
   MagnifyingGlassIcon,
   DotsHorizontalIcon,
+  ChevronDownIcon,
+  TextAlignTopIcon,
+  TextAlignBottomIcon,
 } from "@radix-ui/react-icons";
 
 import { useMealsQuery } from "@/services/meals/useMealsQuery";
@@ -40,6 +43,11 @@ const SearchSchema = z.object({
     .enum(["all", "breakfast", "lunch", "dinner", "snack"])
     .optional()
     .default("all"),
+  sortKey: z
+    .enum(["name", "createdAt", "updatedAt"])
+    .optional()
+    .default("updatedAt"),
+  sortDirection: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
 export const Route = createFileRoute("/meals/")({
@@ -51,7 +59,7 @@ function Meals() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [mealIdToDelete, setMealIdToDelete] = useState<string | null>(null);
   const [mealToEdit, setMealToEdit] = useState<Meal | null>(null);
-  const { search, category } = Route.useSearch();
+  const { search, category, sortKey, sortDirection } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
   const createMeal = useMealCreate();
@@ -61,6 +69,8 @@ function Meals() {
   const meals: Array<Meal> = useMealsQuery({
     category: category !== "all" ? category : undefined,
     search,
+    sortKey,
+    sortDirection,
   });
 
   const debouncedSearch = useCallback(
@@ -71,6 +81,23 @@ function Meals() {
     }, 500),
     []
   );
+
+  const getSortIcon = () => {
+    if (sortDirection === "asc") {
+      return <TextAlignTopIcon />;
+    }
+    return <TextAlignBottomIcon />;
+  };
+
+  const getSortLabel = () => {
+    if (sortKey === "name") {
+      return "Name";
+    }
+    if (sortKey === "createdAt") {
+      return "Created at";
+    }
+    return "Updated at";
+  };
 
   return (
     <div>
@@ -116,26 +143,98 @@ function Meals() {
             meal={mealToEdit!}
           />
 
-          <Select.Root
-            value={category}
-            onValueChange={(category: MealCategory) => {
-              navigate({
-                search: (prev) => ({
-                  ...prev,
-                  category,
-                }),
-              });
-            }}
-          >
-            <Select.Trigger placeholder="Select category" />
-            <Select.Content>
-              <Select.Item value="all">All</Select.Item>
-              <Select.Item value="breakfast">Breakfast</Select.Item>
-              <Select.Item value="lunch">Lunch</Select.Item>
-              <Select.Item value="dinner">Dinner</Select.Item>
-              <Select.Item value="snack">Snack</Select.Item>
-            </Select.Content>
-          </Select.Root>
+          <Flex justify="between" gap="4">
+            <Select.Root
+              value={category}
+              onValueChange={(category: MealCategory) => {
+                navigate({
+                  search: (prev) => ({
+                    ...prev,
+                    category,
+                  }),
+                });
+              }}
+            >
+              <Select.Trigger placeholder="Select category" />
+              <Select.Content>
+                <Select.Item value="all">All</Select.Item>
+                <Select.Item value="breakfast">Breakfast</Select.Item>
+                <Select.Item value="lunch">Lunch</Select.Item>
+                <Select.Item value="dinner">Dinner</Select.Item>
+                <Select.Item value="snack">Snack</Select.Item>
+              </Select.Content>
+            </Select.Root>
+
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button variant="outline" color="gray">
+                  {getSortIcon()}
+                  <Text style={{ color: "var(--gray-12)" }}>
+                    {getSortLabel()}
+                  </Text>
+                  <ChevronDownIcon />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end">
+                <DropdownMenu.Label>Sort by</DropdownMenu.Label>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    navigate({
+                      search: (prev) => ({ ...prev, sortKey: "name" }),
+                    })
+                  }
+                >
+                  Name
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    navigate({
+                      search: (prev) => ({ ...prev, sortKey: "createdAt" }),
+                    })
+                  }
+                >
+                  Created at
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    navigate({
+                      search: (prev) => ({ ...prev, sortKey: "updatedAt" }),
+                    })
+                  }
+                >
+                  Updated at
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Label>Order by</DropdownMenu.Label>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    navigate({
+                      search: (prev) => ({
+                        ...prev,
+                        sortDirection: "asc",
+                      }),
+                    })
+                  }
+                >
+                  <TextAlignTopIcon />
+                  Ascending
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    navigate({
+                      search: (prev) => ({
+                        ...prev,
+                        sortDirection: "desc",
+                      }),
+                    })
+                  }
+                >
+                  <TextAlignBottomIcon />
+                  Descending
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </Flex>
 
           <Separator orientation="horizontal" size="4" my="5" />
 
