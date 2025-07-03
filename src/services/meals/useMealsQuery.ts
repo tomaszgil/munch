@@ -6,13 +6,17 @@ import type { Meal, MealCategory, SortKey, SortDirection } from "./types";
 export const useMealsQuery = ({
   category,
   search,
+  favorite,
   sortKey = "updatedAt",
   sortDirection = "desc",
+  limit = undefined,
 }: {
   category?: MealCategory;
   search?: string;
+  favorite?: boolean;
   sortKey?: SortKey;
   sortDirection?: SortDirection;
+  limit?: number;
 } = {}) => {
   const results = useSyncExternalStore<Meal[]>(store.subscribe, store.get);
 
@@ -20,6 +24,9 @@ export const useMealsQuery = ({
     let matches = true;
     if (category !== undefined) {
       matches = matches && meal.category === category;
+    }
+    if (favorite !== undefined) {
+      matches = matches && meal.favorite === favorite;
     }
     if (search !== undefined) {
       matches =
@@ -32,7 +39,7 @@ export const useMealsQuery = ({
     return matches;
   });
 
-  return filteredResults.sort((a, b) => {
+  const sortedResults = filteredResults.sort((a, b) => {
     let aValue: string | number;
     let bValue: string | number;
 
@@ -60,4 +67,6 @@ export const useMealsQuery = ({
       return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     }
   });
+
+  return limit ? sortedResults.slice(0, limit) : sortedResults;
 };

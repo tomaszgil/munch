@@ -10,6 +10,7 @@ export const useMealCreate = () => {
       name: meal.name,
       ingredients: meal.ingredients,
       category: meal.category,
+      favorite: false,
       createdAt: now,
       updatedAt: now,
     };

@@ -21,6 +21,7 @@ export const MealSchema = z.object({
   name: z.string(),
   ingredients: z.array(z.string()),
   category: MealCategorySchema,
+  favorite: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

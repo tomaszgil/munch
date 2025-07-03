@@ -16,7 +16,13 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
-import { ChevronLeftIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  ChevronLeftIcon,
+  Pencil1Icon,
+  TrashIcon,
+  StarFilledIcon,
+  StarIcon,
+} from "@radix-ui/react-icons";
 
 import { useMealQuery } from "@/services/meals/useMealQuery";
 import { useMealDelete } from "@/services/meals/useMealDelete";
@@ -49,6 +55,7 @@ function RouteComponent() {
       search: {
         category: "all",
         search: "",
+        favorite: false,
         sortKey: "updatedAt",
         sortDirection: "desc",
       },
@@ -89,6 +96,17 @@ function RouteComponent() {
     toast.success(`You have updated ${updatedMeal?.name}.`);
   };
 
+  const handleToggleFavorite = () => {
+    const updatedMeal = updateMeal(mealId, { favorite: !meal.favorite });
+    if (updatedMeal) {
+      toast.success(
+        updatedMeal.favorite
+          ? `Added ${updatedMeal.name} to favorites.`
+          : `Removed ${updatedMeal.name} from favorites.`
+      );
+    }
+  };
+
   return (
     <>
       <Box maxWidth="960px" mx="auto">
@@ -103,28 +121,40 @@ function RouteComponent() {
           >
             <ChevronLeftIcon width={24} height={24} />
           </IconButton>
-          <Heading as="h1" size="6" truncate>
-            {meal?.name}
-          </Heading>
+          <Flex align="center" gap="2">
+            <Heading as="h1" size="6" truncate>
+              {meal?.name}
+            </Heading>
+            {meal.favorite && (
+              <StarFilledIcon color="var(--amber-9)" width={24} height={24} />
+            )}
+          </Flex>
         </Flex>
         <Card size="3">
-          <Flex mb="4" gap="4">
-            <Button
-              variant="soft"
-              color="gray"
-              onClick={() => setIsEditDialogOpen(true)}
-            >
-              <Pencil1Icon />
-              Edit
+          <Flex justify="between" mb="4" gap="4">
+            <Button variant="soft" onClick={handleToggleFavorite}>
+              {meal.favorite ? <StarFilledIcon /> : <StarIcon />}
+              {meal.favorite ? "Remove from favorites" : "Add to favorites"}
             </Button>
-            <Button
-              variant="soft"
-              color="red"
-              onClick={() => setIsDeleteDialogOpen(true)}
-            >
-              <TrashIcon />
-              Delete
-            </Button>
+
+            <Flex gap="4">
+              <Button
+                variant="soft"
+                color="gray"
+                onClick={() => setIsEditDialogOpen(true)}
+              >
+                <Pencil1Icon />
+                Edit
+              </Button>
+              <Button
+                variant="soft"
+                color="red"
+                onClick={() => setIsDeleteDialogOpen(true)}
+              >
+                <TrashIcon />
+                Delete
+              </Button>
+            </Flex>
           </Flex>
           <Separator orientation="horizontal" size="4" my="5" />
 

@@ -16,6 +16,7 @@ import {
   Separator,
   DropdownMenu,
   IconButton,
+  Switch,
 } from "@radix-ui/themes";
 import {
   PlusIcon,
@@ -43,6 +44,7 @@ const SearchSchema = z.object({
     .enum(["all", "breakfast", "lunch", "dinner", "snack"])
     .optional()
     .default("all"),
+  favorite: z.boolean().optional().default(false),
   sortKey: z
     .enum(["name", "createdAt", "updatedAt"])
     .optional()
@@ -59,7 +61,8 @@ function Meals() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [mealIdToDelete, setMealIdToDelete] = useState<string | null>(null);
   const [mealToEdit, setMealToEdit] = useState<Meal | null>(null);
-  const { search, category, sortKey, sortDirection } = Route.useSearch();
+  const { search, category, favorite, sortKey, sortDirection } =
+    Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
   const createMeal = useMealCreate();
@@ -69,6 +72,7 @@ function Meals() {
   const meals: Array<Meal> = useMealsQuery({
     category: category !== "all" ? category : undefined,
     search,
+    favorite: favorite ? true : undefined,
     sortKey,
     sortDirection,
   });
@@ -144,26 +148,47 @@ function Meals() {
           />
 
           <Flex justify="between" gap="4">
-            <Select.Root
-              value={category}
-              onValueChange={(category: MealCategory) => {
-                navigate({
-                  search: (prev) => ({
-                    ...prev,
-                    category,
-                  }),
-                });
-              }}
-            >
-              <Select.Trigger placeholder="Select category" />
-              <Select.Content>
-                <Select.Item value="all">All</Select.Item>
-                <Select.Item value="breakfast">Breakfast</Select.Item>
-                <Select.Item value="lunch">Lunch</Select.Item>
-                <Select.Item value="dinner">Dinner</Select.Item>
-                <Select.Item value="snack">Snack</Select.Item>
-              </Select.Content>
-            </Select.Root>
+            <Flex gap="3" align="center">
+              <Select.Root
+                value={category}
+                onValueChange={(category: MealCategory) => {
+                  navigate({
+                    search: (prev) => ({
+                      ...prev,
+                      category,
+                    }),
+                  });
+                }}
+              >
+                <Select.Trigger placeholder="Select category" />
+                <Select.Content>
+                  <Select.Item value="all">All</Select.Item>
+                  <Select.Item value="breakfast">Breakfast</Select.Item>
+                  <Select.Item value="lunch">Lunch</Select.Item>
+                  <Select.Item value="dinner">Dinner</Select.Item>
+                  <Select.Item value="snack">Snack</Select.Item>
+                </Select.Content>
+              </Select.Root>
+
+              <Text as="label" size="2">
+                <Flex align="center">
+                  <Switch
+                    checked={!!favorite}
+                    onCheckedChange={(checked: boolean) => {
+                      navigate({
+                        search: (prev) => ({
+                          ...prev,
+                          favorite: checked,
+                        }),
+                      });
+                    }}
+                    size="2"
+                    mr="2"
+                  />
+                  Favorites
+                </Flex>
+              </Text>
+            </Flex>
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
@@ -244,12 +269,11 @@ function Meals() {
                 No meals available
               </Heading>
               <Text color="gray" align="center" mb="3">
-                You haven't added any meals yet. Start by creating your first
-                meal!
+                There are no meals yet to display for this search.
               </Text>
               <Button variant="soft" onClick={() => setIsDialogOpen(true)}>
                 <PlusIcon />
-                Create your first meal
+                Create a new meal
               </Button>
             </Flex>
           ) : (
@@ -264,6 +288,26 @@ function Meals() {
                         </IconButton>
                       </DropdownMenu.Trigger>
                       <DropdownMenu.Content align="end">
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            const updatedMeal = updateMeal(meal.id, {
+                              favorite: !meal.favorite,
+                            });
+                            if (updatedMeal) {
+                              toast.success(
+                                updatedMeal.favorite
+                                  ? `Added ${updatedMeal.name} to favorites.`
+                                  : `Removed ${updatedMeal.name} from favorites.`
+                              );
+                            }
+                          }}
+                        >
+                          {meal.favorite ? (
+                            <Text>Remove from favorites</Text>
+                          ) : (
+                            <Text>Add to favorites</Text>
+                          )}
+                        </DropdownMenu.Item>
                         <DropdownMenu.Item onClick={() => setMealToEdit(meal)}>
                           Edit
                         </DropdownMenu.Item>

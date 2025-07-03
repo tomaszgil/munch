@@ -1,5 +1,6 @@
 import { Badge, Card, Flex, Text } from "@radix-ui/themes";
 import { Link } from "@tanstack/react-router";
+import { StarFilledIcon } from "@radix-ui/react-icons";
 
 import type { Meal, MealCategory, MealCreate } from "@/services/meals/types";
 
@@ -54,13 +55,18 @@ export function MealCard({ meal, children }: MealCardProps) {
   return (
     <BaseMealCard
       name={
-        <Link
-          to="/meals/$mealId"
-          params={{ mealId: meal.id }}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          {meal.name}
-        </Link>
+        <Flex gap="2" align="center">
+          <Link
+            to="/meals/$mealId"
+            params={{ mealId: meal.id }}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            {meal.name}
+          </Link>
+          {meal.favorite && (
+            <StarFilledIcon style={{ color: "var(--amber-9)" }} />
+          )}
+        </Flex>
       }
       category={meal.category}
       ingredients={meal.ingredients}

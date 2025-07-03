@@ -33,15 +33,13 @@ export const Route = createFileRoute("/")({
 });
 
 function RecentMeals() {
-  const meals = useMealsQuery();
-  const recentMeals = [...meals]
-    .sort(
-      (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    )
-    .slice(0, 3);
+  const meals = useMealsQuery({
+    sortKey: "updatedAt",
+    sortDirection: "desc",
+    limit: 3,
+  });
 
-  if (recentMeals.length === 0) {
+  if (meals.length === 0) {
     return (
       <Flex direction="column" align="center" gap="2" py="6">
         <Heading size="4" align="center">
@@ -56,7 +54,37 @@ function RecentMeals() {
 
   return (
     <Flex direction="column" gap="3">
-      {recentMeals.map((meal) => (
+      {meals.map((meal) => (
+        <MealCard key={meal.id} meal={meal} />
+      ))}
+    </Flex>
+  );
+}
+
+function FavoriteMeals() {
+  const meals = useMealsQuery({
+    favorite: true,
+    sortKey: "updatedAt",
+    sortDirection: "desc",
+    limit: 3,
+  });
+
+  if (meals.length === 0) {
+    return (
+      <Flex direction="column" align="center" gap="2" py="6">
+        <Heading size="4" align="center">
+          No favorite meals
+        </Heading>
+        <Text color="gray" align="center">
+          You haven't marked any meals as favorites yet.
+        </Text>
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex direction="column" gap="3">
+      {meals.map((meal) => (
         <MealCard key={meal.id} meal={meal} />
       ))}
     </Flex>
@@ -257,6 +285,18 @@ function App() {
               View your most recent meal entries.
             </Text>
             <RecentMeals />
+          </Flex>
+        </Card>
+
+        <Card size="3">
+          <Flex direction="column" gap="2">
+            <Heading as="h2" size="4">
+              Favorite Meals
+            </Heading>
+            <Text size="2" color="gray" mb="4">
+              Your most recently updated favorite meals.
+            </Text>
+            <FavoriteMeals />
           </Flex>
         </Card>
 
