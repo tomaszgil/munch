@@ -37,6 +37,8 @@ import { CreateMealDialog } from "@/components/CreateMealDialog";
 import { DeleteMealDialog } from "@/components/DeleteMealDialog";
 import { UpdateMealDialog } from "@/components/UpdateMealDialog";
 import { MealCard } from "@/components/MealCard";
+import { AnimatedListItem } from "@/components/AnimatedListItem";
+import { AnimatePresence } from "motion/react";
 
 const SearchSchema = z.object({
   search: z.string().optional().default(""),
@@ -277,64 +279,76 @@ function Meals() {
               </Button>
             </Flex>
           ) : (
-            <Flex direction="column" gap="3">
-              {meals.map((meal) => (
-                <MealCard key={meal.id} meal={meal}>
-                  <Flex gap="4" align="center">
-                    <DropdownMenu.Root>
-                      <DropdownMenu.Trigger>
-                        <IconButton variant="ghost" color="gray">
-                          <DotsHorizontalIcon />
-                        </IconButton>
-                      </DropdownMenu.Trigger>
-                      <DropdownMenu.Content align="end">
-                        <DropdownMenu.Item
-                          onClick={() => {
-                            const updatedMeal = updateMeal(meal.id, {
-                              favorite: !meal.favorite,
-                            });
-                            if (updatedMeal) {
-                              toast.success(
-                                updatedMeal.favorite
-                                  ? `Added ${updatedMeal.name} to favorites.`
-                                  : `Removed ${updatedMeal.name} from favorites.`
-                              );
-                            }
-                          }}
-                        >
-                          {meal.favorite ? (
-                            <Text>Remove from favorites</Text>
-                          ) : (
-                            <Text>Add to favorites</Text>
-                          )}
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item onClick={() => setMealToEdit(meal)}>
-                          Edit
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onClick={() => {
-                            createMeal({
-                              name: `Copy of ${meal.name}`,
-                              category: meal.category,
-                              ingredients: meal.ingredients,
-                            });
-                            toast.success(`You have duplicated ${meal.name}.`);
-                          }}
-                        >
-                          Duplicate
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          color="red"
-                          onClick={() => setMealIdToDelete(meal.id)}
-                        >
-                          Delete
-                        </DropdownMenu.Item>
-                      </DropdownMenu.Content>
-                    </DropdownMenu.Root>
-                  </Flex>
-                </MealCard>
-              ))}
-            </Flex>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              <Flex direction="column">
+                <AnimatePresence initial={false}>
+                  {meals.map((meal, index) => (
+                    <AnimatedListItem key={meal.id}>
+                      <Box mb={index === meals.length - 1 ? "0" : "3"}>
+                        <MealCard meal={meal}>
+                          <Flex gap="4" align="center">
+                            <DropdownMenu.Root>
+                              <DropdownMenu.Trigger>
+                                <IconButton variant="ghost" color="gray">
+                                  <DotsHorizontalIcon />
+                                </IconButton>
+                              </DropdownMenu.Trigger>
+                              <DropdownMenu.Content align="end">
+                                <DropdownMenu.Item
+                                  onClick={() => {
+                                    const updatedMeal = updateMeal(meal.id, {
+                                      favorite: !meal.favorite,
+                                    });
+                                    if (updatedMeal) {
+                                      toast.success(
+                                        updatedMeal.favorite
+                                          ? `Added ${updatedMeal.name} to favorites.`
+                                          : `Removed ${updatedMeal.name} from favorites.`
+                                      );
+                                    }
+                                  }}
+                                >
+                                  {meal.favorite ? (
+                                    <Text>Remove from favorites</Text>
+                                  ) : (
+                                    <Text>Add to favorites</Text>
+                                  )}
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                  onClick={() => setMealToEdit(meal)}
+                                >
+                                  Edit
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                  onClick={() => {
+                                    createMeal({
+                                      name: `Copy of ${meal.name}`,
+                                      category: meal.category,
+                                      ingredients: meal.ingredients,
+                                    });
+                                    toast.success(
+                                      `You have duplicated ${meal.name}.`
+                                    );
+                                  }}
+                                >
+                                  Duplicate
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                  color="red"
+                                  onClick={() => setMealIdToDelete(meal.id)}
+                                >
+                                  Delete
+                                </DropdownMenu.Item>
+                              </DropdownMenu.Content>
+                            </DropdownMenu.Root>
+                          </Flex>
+                        </MealCard>
+                      </Box>
+                    </AnimatedListItem>
+                  ))}
+                </AnimatePresence>
+              </Flex>
+            </ul>
           )}
         </Card>
       </Box>
